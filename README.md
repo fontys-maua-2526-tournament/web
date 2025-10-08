@@ -1,16 +1,13 @@
-# React + Vite
+## Tournament Project - API
+This is part of an educational collaboration project that helps tournament organizers coordinate and run their events.   
+### Branch rules
+- Only the development branch can pull into the main
+- Only pull request into the development branch
+- Branch names should contain US# in their name (US1-Guest_view)
+- Shared naming between the API and Web repos
+### Commit rules
+Commits descriptions should report what you did, even if it's a small change. 
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Commit titles/summaries should mention what implementation you did (ex. feat: add homePage).
+### Branches rules
+Branches should be named after the change in the project, if it is an adition (for ex: adding an new page to the project) it should be named a feature/{whatWillBeDone} or a fix (fix/{whatWillBeDone})
