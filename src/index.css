@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+/* COLORS */
+@theme {
+  --color-mauaBlue: #01288d;
+  --color-mauaBlueSecondary: #698996;
+  --color-fontyssPurple: #593262;
+  --color-fontyssPurpleSecondary: #22162b;
+  --color-coolWhite: #fffbfe;
+}
