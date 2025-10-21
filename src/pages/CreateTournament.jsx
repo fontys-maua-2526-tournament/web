@@ -3,12 +3,18 @@ import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function Home() {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
-  const [startDateTime, setStartDateTime] = useState('');
-  const [endDateTime, setEndDateTime] = useState('');
+  const [startTime, setStartDateTime] = useState('');
+  const [endTime, setEndDateTime] = useState('');
+
+  const handleSubmit = () => {
+    axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {name, address, startTime, endTime});
+    console.log({name, address, startTime, endTime});
+  }
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -45,7 +51,7 @@ export default function Home() {
             id="startDate"
             name="startDate"
             label="Start Date"
-            value={startDateTime}
+            value={startTime}
             onChange={e => setStartDateTime(e.target.value)}
             placeholder="Select date and time..."
             className="max-w-md"
@@ -56,13 +62,13 @@ export default function Home() {
             id="endDate"
             name="endDate"
             label="End Date"
-            value={endDateTime}
+            value={endTime}
             onChange={e => setEndDateTime(e.target.value)}
             placeholder="Select date and time..."
             className="max-w-md"
             showCopy
         />
-        <CustomButton onClick={() => alert('Button clicked!')} children="Save" />
+        <CustomButton onClick={handleSubmit} children="Save" />
       </div>
     </div>
   );
