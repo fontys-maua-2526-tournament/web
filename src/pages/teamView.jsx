@@ -18,8 +18,8 @@ const teamViewer = () => {
                 console.log(data);
                 setTeams(data);
             } catch (error) {
-                console.error('Failed to fetch player:', error);
-                setPlayer(null);
+                console.error('Failed to fetch teams:', error);
+                setTeams(null);
             } finally {
                 setLoading(false);
             }
@@ -36,7 +36,7 @@ const teamViewer = () => {
                     <td>team Id</td>
                     <td>Team Name</td>
                 </th>
-                {data.teams.forEach(team => {
+                {teams.forEach(team => {
                    <tr>
                     <td>
                         {team.id}
