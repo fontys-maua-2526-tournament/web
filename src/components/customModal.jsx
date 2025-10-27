@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export default function CustomModal({ isOpen, onClose, title, children }) {
   if (!isOpen) return null;
@@ -13,10 +13,22 @@ export default function CustomModal({ isOpen, onClose, title, children }) {
     }
   }, [isOpen]);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setLoaded(false);
     setTimeout(() => onClose(), 200);
-  };
+  }, [onClose]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = e => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        handleClose();
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isOpen, handleClose]);
 
   return (
     <div
