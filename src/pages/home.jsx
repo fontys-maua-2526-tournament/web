@@ -1,10 +1,12 @@
 import Navbar from '../components/navbar';
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
+import CustomModal from '../components/customModal';
 import { useState } from 'react';
 
 export default function Home() {
   const [textExample, setTextExample] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -43,8 +45,11 @@ export default function Home() {
           placeholder="Type something..."
           className="max-w-md"
         />
-        <CustomButton onClick={() => alert('Button clicked!')} children="Click Me" />
+        <CustomButton onClick={() => setModalOpen(true)} children="Click Me" />
       </div>
+      <CustomModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="My Modal">
+        <p>This is the content of the modal!</p>
+      </CustomModal>
     </div>
   );
 }
