@@ -13,7 +13,7 @@ function Sidebar() {
       <SidebarLayout>
         <SidebarItem icon={<House size={20} />} text="Home" to="/" />
         <SidebarItem icon={<Trophy size={20} />} text="Tournaments" to="/tournaments" />
-        <SidebarItem icon={<Users size={20} />} text="Teams" to="/teams" />
+        <SidebarItem icon={<Users size={20} />} text="Teams" to="/teams/view" />
         <SidebarItem icon={<User size={20} />} text="Profile" to="/profile" />
       </SidebarLayout>
     </SidebarContext.Provider>

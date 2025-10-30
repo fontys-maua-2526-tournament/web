@@ -2,7 +2,7 @@ import CustomButton from '../components/customButton';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { PlusCircleIcon } from '@phosphor-icons/react';
+import { LucidePlusCircle } from 'lucide-react';
 
 const TeamViewer = () => {
     const [teams, setTeams] = useState([]);
@@ -39,7 +39,7 @@ const TeamViewer = () => {
             <div className="flex items-center gap-4 mb-8">
                 <h1 className="text-4xl font-bold text-gray-900">My Teams</h1>
                 <Link to={`/teams/new`}>
-                    <PlusCircleIcon className='text-purple-600 hover:text-purple-800 transition-colors'/>
+                    <LucidePlusCircle className='text-purple-600 hover:text-purple-800 transition-colors'/>
                 </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
