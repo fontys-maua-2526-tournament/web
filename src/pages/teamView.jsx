@@ -4,19 +4,19 @@ import CustomTextField from '../components/customTextField';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const teamViewer = () => {
-    const [teams, setTeams] = useState(null);
+const TeamViewer = () => {
+    const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchTeams = async () => {
             setLoading(true)
-            const options = {method: 'GET', url: `https://localhost:/team`};
+            const options = {method: 'GET', url: `http://localhost:8080/teams`};
 
             try {
                 const { data } = await axios.request(options);
                 console.log(data);
-                setTeams(data);
+                setTeams(data.teams);
             } catch (error) {
                 console.error('Failed to fetch teams:', error);
                 setTeams(null);
@@ -26,29 +26,38 @@ const teamViewer = () => {
         };
 
         fetchTeams();
-    });
+        //Pull the data again every minute
+        const Interval = setInterval(fetchTeams, 60000);
+        //prevent memory leakage
+        return () => clearInterval(Interval);
+
+    }, []);
 
 
     return (
         <div>
             <table>
-                <th>
-                    <td>team Id</td>
-                    <td>Team Name</td>
-                </th>
-                {teams.forEach(team => {
-                   <tr>
-                    <td>
-                        {team.id}
-                    </td>
-                    <td>
-                        {team.name}
-                    </td>
-                   </tr> 
-                })}
+                <tbody>
+                    <tr>
+                        <th>team Id</th>
+                        <th>Team Name</th>
+                    </tr>
+                </tbody>
+                {teams.map(team => (
+                   <tbody>
+                        <tr>
+                            <td>
+                                {team.id}
+                            </td>
+                            <td>
+                                {team.name}
+                            </td>
+                        </tr>
+                   </tbody> 
+                ))}
             </table>
         </div>
     );
 };
 
-export default teamViewer;
+export default TeamViewer;
