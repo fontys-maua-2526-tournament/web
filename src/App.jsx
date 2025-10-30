@@ -14,7 +14,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/teamview" element={<TeamViewer />} />
+          <Route path="/teams/view" element={<TeamViewer />} />
         </Routes>
       </div>
     </div>
