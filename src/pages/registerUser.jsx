@@ -1,6 +1,7 @@
 import Navbar from '../components/navbar';
 import CustomTextField from '../components/customTextField';
 import CustomButton from '../components/customButton';
+import { useState } from 'react';
 
 export default function RegisterUser() {
   const [formData, setFormData] = useState({
@@ -95,7 +96,7 @@ export default function RegisterUser() {
             className="w-full"
           />
 
-          <CustomButton onClick={()=>{}} className="mt-4 w-full" children="click me"/>
+          <CustomButton onClick={() => {}} className="mt-4 w-full" children="click me" />
         </form>
       </div>
     </div>
