@@ -32,7 +32,7 @@ export default function CustomModal({ isOpen, onClose, title, children }) {
 
   return (
     <div
-      className={`bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-white/20 backdrop-blur-xl duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
+      className={`bg-opacity-50 fixed inset-0 z-[999] flex items-center justify-center bg-white/20 backdrop-blur-xl duration-300 ${loaded ? 'opacity-100' : 'opacity-0'}`}
       onClick={handleClose}
     >
       <div
