@@ -5,6 +5,7 @@ import Login from "./pages/login";
 import Sidebar from "./components/sidebar/Sidebar";
 import TeamViewer from "./pages/teamView";
 import TournamentView from "./pages/TournamentView";
+import TournamentCreate from "./pages/TournamentCreate";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/teams/view" element={<TeamViewer />} />
           <Route path="/tournaments" element={<TournamentView />} />
+          <Route path="/tournaments/create" element={<TournamentCreate />} />
         </Routes>
       </div>
     </div>
