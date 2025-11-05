@@ -10,6 +10,7 @@ export default function RegisterUser() {
     phone: '',
     password: '',
     confirmPassword: '',
+    dob: '',
   });
 
   const handleChange = e => {
@@ -20,7 +21,7 @@ export default function RegisterUser() {
   const handleSubmit = e => {
     e.preventDefault();
 
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword || !formData.dob) {
       alert('Please, fill in all required fields.');
       return;
     }
@@ -36,14 +37,19 @@ export default function RegisterUser() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    // <div className="flex h-screen items-center justify-center">
+    <div className='flex min-h-screen flex-col'>
       <Navbar />
       <div className="flex flex-col items-center gap-8">
-        <h1 className="text-black- text-3xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-110">
+        <h1 className="text-black text-3xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-110 mb-8">
           Register an user
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex w-full max-w-md flex-col items-center gap-6">
+        <form 
+          onSubmit={handleSubmit} 
+          className="flex w-full max-w-md flex-col gap-6"
+        >
+          
           <CustomTextField
             id="name"
             name="name"
@@ -92,6 +98,17 @@ export default function RegisterUser() {
             value={formData.confirmPassword}
             onChange={handleChange}
             type="password"
+            placeholder="Repeat your password"
+            className="w-full"
+          />
+
+          <CustomTextField
+            id="dob"
+            name="dob"
+            label="Confirm dob"
+            value={formData.dob}
+            onChange={handleChange}
+            type="date"
             placeholder="Repeat your password"
             className="w-full"
           />
