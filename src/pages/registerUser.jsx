@@ -1,4 +1,3 @@
-import Navbar from '../components/navbar';
 import CustomTextField from '../components/customTextField';
 import CustomButton from '../components/customButton';
 import { useState } from 'react';
@@ -39,7 +38,6 @@ export default function RegisterUser() {
   return (
     // <div className="flex h-screen items-center justify-center">
     <div className='flex min-h-screen flex-col'>
-      <Navbar />
       <div className="flex flex-col items-center gap-8">
         <h1 className="text-black text-3xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-110 mb-8">
           Register an user
@@ -113,7 +111,7 @@ export default function RegisterUser() {
             className="w-full"
           />
 
-          <CustomButton onClick={() => {}} className="mt-4 w-full" children="click me" />
+          <CustomButton onClick={() => {}} className="mt-4" children="Register" />
         </form>
       </div>
     </div>

@@ -20,7 +20,8 @@ export default function App() {
           <Route path="/teams/view" element={<TeamViewer />} />
           <Route path="/tournaments" element={<TournamentView />} />
           <Route path="/tournaments/create" element={<TournamentCreate />} />
-          <Route path="/register_user" element={<RegisterUser />}/>
+          <Route path="/user/register" element={<RegisterUser />}/>
+          <Route path="login" element={<Login />}/>
         </Routes>
       </div>
     </div>
