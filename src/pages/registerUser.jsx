@@ -39,7 +39,7 @@ export default function RegisterUser() {
     // <div className="flex h-screen items-center justify-center">
     <div className='flex min-h-screen flex-col'>
       <div className="flex flex-col items-center gap-8">
-        <h1 className="text-black text-3xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-110 mb-8">
+        <h1 className="text-black text-4xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-101 mb-8">
           Register an user
         </h1>
 
@@ -103,11 +103,11 @@ export default function RegisterUser() {
           <CustomTextField
             id="dob"
             name="dob"
-            label="Confirm dob"
+            label="Date of Birth"
             value={formData.dob}
             onChange={handleChange}
             type="date"
-            placeholder="Repeat your password"
+            placeholder="Your date of birth"
             className="w-full"
           />
 
