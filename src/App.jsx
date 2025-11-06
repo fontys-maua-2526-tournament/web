@@ -4,6 +4,8 @@ import Home from "./pages/home";
 import Login from "./pages/login";
 import Sidebar from "./components/sidebar/Sidebar";
 import TeamViewer from "./pages/teamView";
+import TeamCreate from "./pages/teamCreate";
+
 
 export default function App() {
   return (
@@ -15,6 +17,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/teams/view" element={<TeamViewer />} />
+          <Route path="/teams/new" element={<TeamCreate />} />
         </Routes>
       </div>
     </div>

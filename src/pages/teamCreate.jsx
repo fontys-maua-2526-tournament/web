@@ -3,20 +3,21 @@ import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { v4 as uuid } from 'uuid'
 
-const teamViewer = () => {
-    const [newTeam, setTeam] = useState(null);
+const TeamCreate = () => {
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const createTeam = async () => {
+    const createTeam = async () => {
             setLoading(true)
             const options = {
                 method: 'POST', 
                 url: `http://localhost:8080/teams`,
                 data: {
-                    id: 0,
-                    name: newTeam
+                    teamName: name,
+                    inviteCode: code
                 }
             };
 
@@ -29,16 +30,55 @@ const teamViewer = () => {
             } finally {
                 setLoading(false);
             }
-        };
+    };
 
-    });
-
+    const generateGUID = async () => {
+            const newGuid = uuid();
+            setCode(newGuid);
+    };
 
     return (
-        <div>
-
+        <div className="flex flex-col flex-1 p-8 ml-20">
+            <h1 className="text-4xl font-bold text-gray-900">Add a new Team</h1>
+            <div>
+                <form onSubmit={() => {createTeam()}}>
+                    <CustomTextField 
+                        id="teamName"
+                        name="nameofTeam"
+                        label="What's the name of the Team?"
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        placeholder="Type something..."
+                        className="max-w-md"
+                    />
+                    <div className=''>
+                        <CustomTextField 
+                            id="teamCode"
+                            name="codeofTeam"
+                            label="Invite people to the Team"
+                            value={code}
+                            onChange={e => setCode(e.target.value)}
+                            placeholder="generate your code..."
+                            className="max-w-md"
+                            showCopy
+                            disabled={true}
+                        />
+                        <CustomButton
+                            className=""
+                            onClick={() => {generateGUID()}}
+                            children={"Generate invite code."}
+                        />
+                    </div>
+                    <CustomButton
+                        className=""
+                        type="Submit"
+                        onClick={() => {createTeam()}}
+                        children={"Create Team."}
+                    />
+                </form>
+            </div>
         </div>
     );
 };
 
-export default teamViewer;
+export default TeamCreate;  
