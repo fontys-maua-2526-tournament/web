@@ -7,6 +7,7 @@ import TeamViewer from "./pages/teamView";
 import TournamentView from "./pages/TournamentView";
 import TournamentCreate from "./pages/TournamentCreate";
 import RegisterUser from "./pages/registerUser.jsx";
+import CoachTeamView from "./pages/coachTeamView.jsx";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/tournaments" element={<TournamentView />} />
           <Route path="/tournaments/create" element={<TournamentCreate />} />
           <Route path="/user/register" element={<RegisterUser />}/>
+          <Route path="/coach/teams/view" element={<CoachTeamView/>}/>
         </Routes>
       </div>
     </div>
