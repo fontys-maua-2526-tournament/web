@@ -1,5 +1,5 @@
-import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -10,10 +10,13 @@ import RegisterUser from "./pages/registerUser.jsx";
 import CoachTeamView from "./pages/coachTeamView.jsx";
 
 export default function App() {
+
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
   return (
-    <BrowserRouter>
     <div className="flex h-screen">
-      <Sidebar />
+      <Sidebar hideIcons={isLoginPage} />
       <div className="flex-1 p-5 bg-gray-50 overflow-y-auto">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -26,6 +29,5 @@ export default function App() {
         </Routes>
       </div>
     </div>
-    </BrowserRouter>
   );
 }
