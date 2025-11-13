@@ -1,32 +1,34 @@
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 
 const TeamCreate = () => {
-  const [name, setName] = useState('');
-  const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(true);
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
+    const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
   const createTeam = async () => {
     setLoading(true);
     const options = {
       method: 'POST',
-      url: `http://localhost:8080/teams`,
+      url: `http://localhost:8080/teams/create`,
       data: {
-        teamName: name,
+        name: name,
         inviteCode: code,
       },
     };
 
     try {
-      const { data } = await axios.request(options);
-      console.log(data);
+        const { data } = await axios.request(options);
+        navigate('/teams/view');
     } catch (error) {
-      console.error('Failed to create team:', error);
+        console.error('Failed to create team:', error);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
   };
 
