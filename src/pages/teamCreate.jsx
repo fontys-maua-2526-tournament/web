@@ -32,6 +32,15 @@ const TeamCreate = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    if(name==''||code=='') {
+        console.log('name or code is empty');
+        return;
+    };
+
+    await createTeam();
+  };
+
   const generateGUID = async () => {
     const newGuid = uuid();
     setCode(newGuid);
@@ -41,11 +50,7 @@ const TeamCreate = () => {
     <div className="ml-20 flex flex-1 flex-col p-8">
       <h1 className="text-4xl font-bold text-gray-900">Add a new Team</h1>
       <div>
-        <form
-          onSubmit={() => {
-            createTeam();
-          }}
-        >
+        <form>
           <CustomTextField
             id="teamName"
             name="nameofTeam"
@@ -65,7 +70,7 @@ const TeamCreate = () => {
               placeholder="generate your code..."
               className="max-w-md"
               showCopy
-              disabled={true}
+              readOnly
             />
             <CustomButton
               className=""
@@ -77,9 +82,9 @@ const TeamCreate = () => {
           </div>
           <CustomButton
             className=""
-            type="Submit"
+            type="submit"
             onClick={() => {
-              createTeam();
+                handleSubmit();
             }}
             children={'Create Team.'}
           />
