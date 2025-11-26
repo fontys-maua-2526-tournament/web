@@ -3,17 +3,36 @@ import CustomTextField from '../components/customTextField';
 import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
 import axios from 'axios';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function TournamentCreate() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [startTime, setStartDateTime] = useState('');
   const [endTime, setEndDateTime] = useState('');
 
-  const handleSubmit = () => {
-    axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {name, address, startTime, endTime});
-    console.log({name, address, startTime, endTime});
-  }
+  const handleSubmit = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
+        name,
+        address,
+        startTime,
+        endTime
+      });
+
+      toast.success("Tournament created successfully!");
+
+      // Redirect after short delay
+      setTimeout(() => navigate('/tournaments'), 1000);
+
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create tournament.");
+    }
+  };
 
   return (
     <div className="flex h-screen items-center justify-center">
@@ -45,27 +64,30 @@ function TournamentCreate() {
         />
 
         <CustomDateTimePicker
-            id="startDate"
-            name="startDate"
-            label="Start Date"
-            value={startTime}
-            onChange={e => setStartDateTime(e.target.value)}
-            placeholder="Select date and time..."
-            className="max-w-md"
-            showCopy
+          id="startDate"
+          name="startDate"
+          label="Start Date"
+          value={startTime}
+          onChange={e => setStartDateTime(e.target.value)}
+          placeholder="Select date and time..."
+          className="max-w-md"
+          showCopy
         />
 
         <CustomDateTimePicker
-            id="endDate"
-            name="endDate"
-            label="End Date"
-            value={endTime}
-            onChange={e => setEndDateTime(e.target.value)}
-            placeholder="Select date and time..."
-            className="max-w-md"
-            showCopy
+          id="endDate"
+          name="endDate"
+          label="End Date"
+          value={endTime}
+          onChange={e => setEndDateTime(e.target.value)}
+          placeholder="Select date and time..."
+          className="max-w-md"
+          showCopy
         />
-        <CustomButton onClick={handleSubmit} children="Save" />
+
+        <CustomButton onClick={handleSubmit}>
+          Save
+        </CustomButton>
       </div>
     </div>
   );

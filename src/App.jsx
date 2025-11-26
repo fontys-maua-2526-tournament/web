@@ -1,5 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Home from "./pages/home";
 import Login from "./pages/login";
 import Sidebar from "./components/sidebar/Sidebar";
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/tournaments" element={<TournamentView />} />
           <Route path="/tournaments/create" element={<TournamentCreate />} />
         </Routes>
+        <Toaster position="top-right" />
       </div>
     </div>
     </BrowserRouter>
