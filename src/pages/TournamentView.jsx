@@ -2,10 +2,14 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LucidePlusCircle } from 'lucide-react';
+import CustomModal from '../components/customModal';
+import TournamentCreate from './TournamentCreate';
+import CustomButton from '../components/customButton';
 
 function TournamentView() {
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchTournaments = async () => {
@@ -35,14 +39,26 @@ function TournamentView() {
     <div className="m-10 flex flex-1 flex-col p-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-900">My Tournaments</h1>
-
-        <Link
-          to="/tournaments/create"
+        <CustomButton
+          onClick={() => {
+            console.log('Add Tournament clicked');
+            setModalOpen(true);
+            console.log('Modal open state:', modalOpen);
+          }}
           className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
         >
           <LucidePlusCircle className="h-5 w-5" />
           Add Tournament
-        </Link>
+        </CustomButton>
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {tournaments.map(tournament => (
+          <Link key={tournament.id} to={`/tournaments/${tournament.id}`}>
+            <LucidePlusCircle className="h-5 w-5" />
+            Add Tournament
+          </Link>
+        ))}
       </div>
 
       <div className="flex flex-col gap-4">
@@ -54,7 +70,6 @@ function TournamentView() {
           >
             {/* Smaller dark purple section */}
             <div className="bg-fontyssPurple h-full w-6" />
-
             {/* Lighter purple section with text */}
             <div className="flex h-full flex-1 items-center px-6">
               <span className="text-lg font-semibold text-black transition-colors duration-200">
@@ -63,6 +78,13 @@ function TournamentView() {
             </div>
           </Link>
         ))}
+        <CustomModal
+          isOpen={modalOpen}
+          title={'Create a Tournament'}
+          onClose={() => setModalOpen(false)}
+        >
+          <TournamentCreate />
+        </CustomModal>
       </div>
     </div>
   );

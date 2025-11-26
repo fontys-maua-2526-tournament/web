@@ -1,97 +1,65 @@
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { v4 as uuid } from 'uuid';
+import { toast } from 'react-toastify';
 
-const TeamCreate = () => {
-    const [name, setName] = useState('');
-    const [code, setCode] = useState('');
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+function TeamCreate() {
+  const [name, setName] = useState('');
+  const [code, setCode] = useState('');
 
-  const createTeam = async () => {
-    setLoading(true);
-    const options = {
-      method: 'POST',
-      url: `http://localhost:8080/teams/create`,
-      data: {
-        name: name,
-        inviteCode: code,
-      },
-    };
-
+  const handleSubmit = async () => {
+    if (!name || !code) {
+      toast.error('Name and invite code are required');
+      return;
+    }
     try {
-        const { data } = await axios.request(options);
-        navigate('/teams/view');
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
+        name,
+        inviteCode: code,
+      });
+      toast.success('Team created');
+      // Optionally, redirect or clear form here
     } catch (error) {
-        console.error('Failed to create team:', error);
-    } finally {
-        setLoading(false);
+      console.error('Failed to create team:', error);
+      toast.error('Failed to create team: ' + (error?.message ?? 'Network Error'));
     }
   };
 
-  const handleSubmit = async () => {
-    if(name==''||code=='') {
-        console.log('name or code is empty');
-        return;
-    };
-
-    await createTeam();
-  };
-
-  const generateGUID = async () => {
-    const newGuid = uuid();
-    setCode(newGuid);
+  const generateGUID = () => {
+    setCode(uuid());
   };
 
   return (
-    <div className="ml-20 flex flex-1 flex-col p-8">
-      <h1 className="text-4xl font-bold text-gray-900">Add a new Team</h1>
-      <div>
-        <form>
-          <CustomTextField
-            id="teamName"
-            name="nameofTeam"
-            label="What's the name of the Team?"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Type something..."
-            className="max-w-md"
-          />
-          <div className="">
-            <CustomTextField
-              id="teamCode"
-              name="codeofTeam"
-              label="Invite people to the Team"
-              value={code}
-              onChange={e => setCode(e.target.value)}
-              placeholder="generate your code..."
-              className="max-w-md"
-              showCopy
-              readOnly
-            />
-            <CustomButton
-              className=""
-              onClick={() => {
-                generateGUID();
-              }}
-              children={'Generate invite code.'}
-            />
-          </div>
-          <CustomButton
-            className=""
-            type="submit"
-            onClick={() => {
-                handleSubmit();
-            }}
-            children={'Create Team.'}
-          />
-        </form>
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="flex w-full flex-col items-center gap-6 px-8">
+        <CustomTextField
+          id="teamName"
+          name="teamName"
+          label="Team Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Type something..."
+          className="w-full"
+          showCopy
+        />
+        <CustomTextField
+          id="teamCode"
+          name="teamCode"
+          label="Invite Code"
+          value={code}
+          onChange={e => setCode(e.target.value)}
+          placeholder="Generate your code..."
+          className="w-full"
+          showCopy
+          readOnly
+        />
+        <CustomButton className={'w-full'} onClick={generateGUID} children="Generate" />
+        <CustomButton className={'w-full'} onClick={handleSubmit} children="Create Team" />
       </div>
     </div>
   );
-};
+}
 
 export default TeamCreate;
