@@ -4,6 +4,7 @@ import Home from './pages/home';
 import Login from './pages/login';
 import Sidebar from './components/sidebar/Sidebar';
 import TeamViewer from './pages/teamView';
+import TeamCreate from './pages/teamCreate';
 import TournamentView from './pages/TournamentView';
 import TournamentCreate from './pages/TournamentCreate';
 import { ToastContainer } from 'react-toastify';
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/teams/view" element={<TeamViewer />} />
+            <Route path="/teams/new" element={<TeamCreate />} />
             <Route path="/tournaments" element={<TournamentView />} />
             <Route path="/tournaments/create" element={<TournamentCreate />} />
           </Routes>

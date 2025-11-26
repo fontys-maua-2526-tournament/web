@@ -39,7 +39,6 @@ function TournamentView() {
     <div className="m-10 flex flex-1 flex-col p-8">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-900">My Tournaments</h1>
-
         <CustomButton
           onClick={() => {
             console.log('Add Tournament clicked');
@@ -71,7 +70,6 @@ function TournamentView() {
           >
             {/* Smaller dark purple section */}
             <div className="bg-fontyssPurple h-full w-6" />
-
             {/* Lighter purple section with text */}
             <div className="flex h-full flex-1 items-center px-6">
               <span className="text-lg font-semibold text-black transition-colors duration-200">
