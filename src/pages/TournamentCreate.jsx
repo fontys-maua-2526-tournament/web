@@ -28,7 +28,7 @@ function TournamentCreate() {
   };
 
   return (
-    <div className="flex h-screen items-center justify-center">
+    <div className="flex min-h-[50vh] items-center justify-center">
       <div className="flex flex-col items-center gap-6">
         <CustomTextField
           id="name"
