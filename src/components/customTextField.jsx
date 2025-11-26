@@ -15,6 +15,7 @@ export default function CustomTextField({
   showCopy = false,
   size = 'md', // md | lg
   inputProps = {},
+  required = false,
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -26,6 +27,7 @@ export default function CustomTextField({
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
       // ignore
+      console.error('Failed to copy text: ', err);
     }
   };
 
@@ -46,6 +48,7 @@ export default function CustomTextField({
           id={id}
           name={name}
           type="text"
+          required={required}
           value={value}
           onChange={isBlocked ? undefined : onChange}
           placeholder={placeholder}
