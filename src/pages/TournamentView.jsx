@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { LucidePlusCircle } from 'lucide-react';
+import StatusBadge from '../components/StatusBadge';
 
 function TournamentView() {
   const [tournaments, setTournaments] = useState([]);
@@ -128,20 +129,14 @@ function TournamentView() {
           <Link
             key={tournament.id}
             to={`/tournaments/${tournament.id}`}
-            className="flex items-center h-20 rounded-xl overflow-hidden shadow-md 
-                                   bg-[#BDADC0] hover:bg-[#9A8FA0] hover:-translate-y-1 
-                                   hover:shadow-xl transition-all duration-200"
-          >
+            className="flex items-center h-20 rounded-xl overflow-hidden shadow-md bg-[#BDADC0] hover:bg-[#9A8FA0] hover:-translate-y-1  hover:shadow-xl transition-all duration-200">
             <div className="w-6 h-full bg-fontyssPurple" />
 
             <div className="flex flex-1 items-center justify-between px-6">
               <span className="text-lg font-semibold text-black">
                 {tournament.name}
               </span>
-
-              <span className="text-sm text-gray-800 font-medium px-3 py-1 rounded-lg bg-white">
-                {tournament.status}
-              </span>
+              <StatusBadge status={tournament.status} />
             </div>
           </Link>
         ))}
