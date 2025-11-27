@@ -5,7 +5,7 @@ import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { toast } from 'react-toastify';
 
-function TeamCreate() {
+function TeamCreate({ onClose }) {
   const [name, setName] = useState('');
   const [code, setCode] = useState('');
 
@@ -15,12 +15,12 @@ function TeamCreate() {
       return;
     }
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
         name,
         inviteCode: code,
       });
       toast.success('Team created');
-      // Optionally, redirect or clear form here
+      onClose();
     } catch (error) {
       console.error('Failed to create team:', error);
       toast.error('Failed to create team: ' + (error?.message ?? 'Network Error'));
