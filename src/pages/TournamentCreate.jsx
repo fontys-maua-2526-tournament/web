@@ -4,8 +4,11 @@ import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 function TournamentCreate() {
+  const navigate = useNavigate();
+
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [startTime, setStartDateTime] = useState('');
@@ -13,23 +16,31 @@ function TournamentCreate() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
         name,
         address,
         startTime,
-        endTime,
+        endTime
       });
-      console.log('created', res?.data ?? null);
-      toast.success('Tournament created');
+
+      toast.success("Tournament created successfully!");
+
+      // Redirect after short delay
+      setTimeout(() => navigate('/tournaments'), 1000);
+
     } catch (error) {
-      console.error('Failed to create tournament:', error);
-      toast.error('Failed to create tournament: ' + (error?.message ?? 'Network Error'));
+      console.error(error);
+      toast.error("Failed to create tournament.");
     }
   };
 
   return (
     <div className="flex min-h-[50vh] items-center justify-center">
       <div className="flex flex-col items-center gap-6">
+        <h1 className="text-3xl font-bold text-black duration-300 hover:-translate-y-1.5 hover:scale-110 hover:cursor-pointer">
+          Create a Tournament!
+        </h1>
+
         <CustomTextField
           id="name"
           name="Name"
@@ -73,7 +84,10 @@ function TournamentCreate() {
           className="max-w-md"
           showCopy
         />
-        <CustomButton onClick={handleSubmit} children="Save" />
+
+        <CustomButton onClick={handleSubmit}>
+          Save
+        </CustomButton>
       </div>
     </div>
   );
