@@ -38,7 +38,7 @@ function TournamentCreate() {
     <div className="flex h-screen items-center justify-center">
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-3xl font-bold text-black duration-300 hover:-translate-y-1.5 hover:scale-110 hover:cursor-pointer">
-          This is the screen to create a Tournament!
+          Create a Tournament!
         </h1>
 
         <CustomTextField
