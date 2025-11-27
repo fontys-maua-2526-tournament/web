@@ -3,10 +3,12 @@ import { Routes, Route } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import Home from "./pages/home";
 import Login from "./pages/login";
-import CreateTournament from "./pages/CreateTournament";
 import TournamentCreate from './pages/TournamentCreate';
 import RegisterUser from "./pages/registerUser.jsx";
 import CoachTeamView from "./pages/coachTeamView.jsx";
+import TeamViewer from "./pages/teamView";
+import TournamentView from "./pages/TournamentView";
+import Sidebar from "./components/sidebar/Sidebar";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -16,7 +18,6 @@ export default function App() {
   const isLoginPage = location.pathname === "/login";
 
   return (
-<BrowserRouter>
       <div className="flex h-screen">
         <Sidebar hideIcons={isLoginPage}/>
         <ToastContainer
@@ -44,6 +45,5 @@ export default function App() {
           </Routes>
         </div>
       </div>
-    </BrowserRouter>
   );
 }
