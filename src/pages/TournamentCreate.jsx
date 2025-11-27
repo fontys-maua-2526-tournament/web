@@ -5,26 +5,35 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-function TournamentCreate({ onClose }) {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [startTime, setStartDateTime] = useState('');
-  const [endTime, setEndDateTime] = useState('');
-
+function TournamentCreate({ onClose, tournament }) {
+  const [name, setName] = useState(tournament?.name || '');
+  const [address, setAddress] = useState(tournament?.address || '');
+  const [startTime, setStartDateTime] = useState(tournament?.startTime || '');
+  const [endTime, setEndDateTime] = useState(tournament?.endTime || '');
   const handleSubmit = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
-        name,
-        address,
-        startTime,
-        endTime,
-      });
+      tournament
+        ? await axios.put(`${import.meta.env.VITE_API_URL}/tournaments/${tournament.id}`, {
+            name,
+            address,
+            startTime,
+            endTime,
+          })
+        : await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
+            name,
+            address,
+            startTime,
+            endTime,
+          });
 
-      toast.success('Tournament created successfully!');
-      onClose();
+      toast.success(
+        tournament ? 'Tournament updated successfully!' : 'Tournament created successfully!',
+      );
     } catch (error) {
       console.error(error);
-      toast.error('Failed to create tournament.');
+      toast.error(tournament ? 'Failed to update tournament.' : 'Failed to create tournament.');
+    } finally {
+      onClose();
     }
   };
 
@@ -75,7 +84,9 @@ function TournamentCreate({ onClose }) {
           showCopy
         />
 
-        <CustomButton onClick={handleSubmit}>Save</CustomButton>
+        <CustomButton onClick={handleSubmit}>
+          {tournament ? 'Update Tournament' : 'Create Tournament'}
+        </CustomButton>
       </div>
     </div>
   );

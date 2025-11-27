@@ -5,9 +5,9 @@ import axios from 'axios';
 import { v4 as uuid } from 'uuid';
 import { toast } from 'react-toastify';
 
-function TeamCreate({ onClose }) {
-  const [name, setName] = useState('');
-  const [code, setCode] = useState('');
+function TeamCreate({ onClose, team }) {
+  const [name, setName] = useState(team?.name || '');
+  const [code, setCode] = useState(team?.inviteCode || '');
 
   const handleSubmit = async () => {
     if (!name || !code) {
@@ -15,15 +15,24 @@ function TeamCreate({ onClose }) {
       return;
     }
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
-        name,
-        inviteCode: code,
-      });
-      toast.success('Team created');
-      onClose();
+      if (team) {
+        await axios.put(`${import.meta.env.VITE_API_URL}/teams/${team.id}`, {
+          name,
+          inviteCode: code,
+        });
+        toast.success('Team updated');
+      } else {
+        await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
+          name,
+          inviteCode: code,
+        });
+        toast.success('Team created');
+      }
     } catch (error) {
       console.error('Failed to create team:', error);
       toast.error('Failed to create team: ' + (error?.message ?? 'Network Error'));
+    } finally {
+      onClose();
     }
   };
 
@@ -56,7 +65,11 @@ function TeamCreate({ onClose }) {
           readOnly
         />
         <CustomButton className={'w-full'} onClick={generateGUID} children="Generate" />
-        <CustomButton className={'w-full'} onClick={handleSubmit} children="Create Team" />
+        <CustomButton
+          className={'w-full'}
+          onClick={handleSubmit}
+          children={team ? 'Update Team' : 'Create Team'}
+        />
       </div>
     </div>
   );
