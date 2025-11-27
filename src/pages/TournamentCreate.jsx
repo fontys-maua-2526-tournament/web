@@ -11,6 +11,10 @@ function TournamentCreate({ onClose, tournament }) {
   const [startTime, setStartDateTime] = useState(tournament?.startTime || '');
   const [endTime, setEndDateTime] = useState(tournament?.endTime || '');
   const handleSubmit = async () => {
+    if (!name || !address || !startTime || !endTime) {
+      toast.error('All fields are required');
+      return;
+    }
     try {
       tournament
         ? await axios.put(`${import.meta.env.VITE_API_URL}/tournaments/${tournament.id}`, {
