@@ -48,7 +48,7 @@ export default function CustomModal({ isOpen, onClose, title, children }) {
             &times;
           </button>
         </div>
-        <div>{children}</div>
+        <div>{typeof children === 'function' ? children(handleClose) : children}</div>
       </div>
     </div>
   );
