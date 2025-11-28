@@ -1,5 +1,6 @@
 import CustomTextField from '../components/customTextField';
 import CustomButton from '../components/customButton';
+import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
 
 export default function RegisterUser() {
@@ -105,7 +106,7 @@ export default function RegisterUser() {
                 className="mb-5"
               />
 
-              <CustomTextField
+              {/* <CustomTextField
                 id="dob"
                 name="dob"
                 label="Date of Birth"
@@ -114,6 +115,17 @@ export default function RegisterUser() {
                 type="date"
                 placeholder="Your date of birth"
                 className="mb-5"
+              /> */}
+
+              <CustomDateTimePicker
+                id="dob"
+                name="dob"
+                label="Date of Birth"
+                value={formData.dob}
+                onChange={handleChange}
+                placeholder="Your date of birth"
+                className="max-w-md"
+                showCopy
               />
             </div>
           </div>
