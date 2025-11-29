@@ -6,6 +6,7 @@ import TournamentCreate from './pages/TournamentCreate';
 import RegisterUser from "./pages/registerUser.jsx";
 import CoachTeamView from "./pages/coachTeamView.jsx";
 import TeamViewer from "./pages/teamView";
+import TeamDetail from "./pages/teamDetail.jsx";
 import TournamentView from "./pages/TournamentView";
 import Sidebar from "./components/sidebar/Sidebar";
 import { ToastContainer } from 'react-toastify';
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/teams/view" element={<TeamViewer />} />
+            <Route path="/teams/:teamId" element={<TeamDetail />} />
             <Route path="/tournaments" element={<TournamentView />} />
             <Route path="/tournaments/create" element={<TournamentCreate />} />
             <Route path="/user/register" element={<RegisterUser />}/>

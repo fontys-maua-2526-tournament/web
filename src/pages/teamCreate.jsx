@@ -1,39 +1,65 @@
-import Navbar from '../components/navbar';
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
+import { v4 as uuid } from 'uuid';
+import { toast } from 'react-toastify';
 
-function TeamCreate() {
-  const [newTeam, setTeam] = useState(null);
-  const [loading, setLoading] = useState(true);
+function TeamCreate({ onClose }) {
+  const [name, setName] = useState('');
+  const [code, setCode] = useState('');
 
-  useEffect(() => {
-    // eslint-disable-next-line no-unused-vars
-    const createTeam = async () => {
-      setLoading(true);
-      const options = {
-        method: 'POST',
-        url: `http://localhost:8080/teams`,
-        data: {
-          id: 0,
-          name: newTeam,
-        },
-      };
+  const handleSubmit = async () => {
+    if (!name || !code) {
+      toast.error('Name and invite code are required');
+      return;
+    }
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
+        name,
+        inviteCode: code,
+      });
+      toast.success('Team created');
+      onClose();
+    } catch (error) {
+      console.error('Failed to create team:', error);
+      toast.error('Failed to create team: ' + (error?.message ?? 'Network Error'));
+    }
+  };
 
-      try {
-        const { data } = await axios.request(options);
-        console.log(data);
-      } catch (error) {
-        console.error('Failed to create team:', error);
-        setTeam(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-  });
+  const generateGUID = () => {
+    setCode(uuid());
+  };
 
-  return <div></div>;
+  return (
+    <div className="flex min-h-[50vh] items-center justify-center">
+      <div className="flex w-full flex-col items-center gap-6 px-8">
+        <CustomTextField
+          id="teamName"
+          name="teamName"
+          label="Team Name"
+          value={name}
+          onChange={e => setName(e.target.value)}
+          placeholder="Type something..."
+          className="w-full"
+          showCopy
+        />
+        <CustomTextField
+          id="teamCode"
+          name="teamCode"
+          label="Invite Code"
+          value={code}
+          onChange={e => setCode(e.target.value)}
+          placeholder="Generate your code..."
+          className="w-full"
+          showCopy
+          readOnly
+        />
+        <CustomButton className={'w-full'} onClick={generateGUID} children="Generate" />
+        <CustomButton className={'w-full'} onClick={handleSubmit} children="Create Team" />
+      </div>
+    </div>
+  );
 }
 
 export default TeamCreate;
