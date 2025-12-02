@@ -5,7 +5,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-function TournamentCreate() {
+function TournamentCreate({ onClose }) {
   const [name, setName] = useState('');
   const [address, setAddress] = useState('');
   const [startTime, setStartDateTime] = useState('');
@@ -13,22 +13,23 @@ function TournamentCreate() {
 
   const handleSubmit = async () => {
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
         name,
         address,
         startTime,
         endTime,
       });
-      console.log('created', res?.data ?? null);
-      toast.success('Tournament created');
+
+      toast.success('Tournament created successfully!');
+      onClose();
     } catch (error) {
-      console.error('Failed to create tournament:', error);
-      toast.error('Failed to create tournament: ' + (error?.message ?? 'Network Error'));
+      console.error(error);
+      toast.error('Failed to create tournament.');
     }
   };
 
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex min-h-[50vh] items-center justify-center">
       <div className="flex flex-col items-center gap-6">
         <CustomTextField
           id="name"
@@ -73,7 +74,8 @@ function TournamentCreate() {
           className="max-w-md"
           showCopy
         />
-        <CustomButton onClick={handleSubmit} children="Save" />
+
+        <CustomButton onClick={handleSubmit}>Save</CustomButton>
       </div>
     </div>
   );
