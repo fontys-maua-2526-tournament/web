@@ -26,7 +26,7 @@ function TeamCreate({ onClose, team }) {
           name,
           inviteCode: code,
         });
-        toast.success('Team created');
+      toast.success('Team created');
       }
     } catch (error) {
       console.error('Failed to create team:', error);
