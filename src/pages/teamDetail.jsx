@@ -7,21 +7,7 @@ import CustomModal from '../components/customModal';
 import AddUserToTeam from './addUserToTeam';
 import { toast } from 'react-toastify';
 
-// Mock data para membros (será substituído pela API depois)
-const mockMembersByTeamId = {
-  1: [
-    { id: 1, firstName: 'João', lastName: 'Silva', email: 'joao@example.com' },
-    { id: 2, firstName: 'Maria', lastName: 'Santos', email: 'maria@example.com' },
-    { id: 3, firstName: 'Pedro', lastName: 'Oliveira', email: 'pedro@example.com' },
-  ],
-  2: [
-    { id: 4, firstName: 'Ana', lastName: 'Costa', email: 'ana@example.com' },
-    { id: 5, firstName: 'Carlos', lastName: 'Ferreira', email: 'carlos@example.com' },
-  ],
-  3: [
-    { id: 6, firstName: 'Lucas', lastName: 'Martins', email: 'lucas@example.com' },
-  ],
-};
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const TeamDetail = () => {
   const { teamId } = useParams();
@@ -32,23 +18,52 @@ const TeamDetail = () => {
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [selectedMemberToDelete, setSelectedMemberToDelete] = useState(null);
 
+  const fetchMembers = async () => {
+    try {
+      // Attempt to get members from /teams/{teamId}/users
+      const membersRes = await axios.get(`${API_URL}/teams/${teamId}/users`);
+      const membersData = membersRes.data;
+      // Support multiple shapes: array directly, or { users: [] }
+      const list = Array.isArray(membersData)
+        ? membersData
+        : membersData.users || membersData.data || [];
+      setMembers(list);
+    } catch (error) {
+      console.error('Failed to fetch team members:', error);
+      toast.error('Failed to fetch team members');
+      setMembers([]);
+    }
+  };
+
   const fetchTeamDetails = async () => {
     setLoading(true);
     try {
-      // Buscar dados reais do time da API
-      const { data } = await axios.get(`http://localhost:8080/teams`);
-      const foundTeam = data.teams.find(t => t.id === parseInt(teamId));
-      
-      if (!foundTeam) {
-        toast.error('Team not found');
-        return;
+      // Get team basic data from /teams/{teamId} if available
+      try {
+        const { data } = await axios.get(`${API_URL}/teams/${teamId}`);
+        // if API returns the team object directly
+        if (data && data.id) {
+          setTeam(data);
+        } else if (data && Array.isArray(data.teams)) {
+          // fallback if API returns list of teams
+          const found = data.teams.find(t => t.id === parseInt(teamId));
+          setTeam(found || null);
+        } else {
+          setTeam(null);
+        }
+      } catch (err) {
+        // fallback to fetching all teams and finding by id
+        const { data } = await axios.get(`${API_URL}/teams`);
+        const foundTeam = data.teams
+          ? data.teams.find(t => t.id === parseInt(teamId))
+          : Array.isArray(data)
+            ? data.find(t => t.id === parseInt(teamId))
+            : null;
+        setTeam(foundTeam || null);
       }
-      
-      setTeam(foundTeam);
-      
-      // Usar dados mockados para membros por enquanto
-      const mockMembers = mockMembersByTeamId[parseInt(teamId)] || [];
-      setMembers(mockMembers);
+
+      // Now fetch members for the team (if any)
+      await fetchMembers();
     } catch (error) {
       console.error('Failed to fetch team details:', error);
       toast.error('Failed to fetch team details');
@@ -61,16 +76,17 @@ const TeamDetail = () => {
     fetchTeamDetails();
   }, [teamId]);
 
-  const handleRemoveMemberClick = (member) => {
+  const handleRemoveMemberClick = member => {
     setSelectedMemberToDelete(member);
     setConfirmDeleteModal(true);
   };
 
   const handleConfirmDelete = async () => {
     try {
-      // Mock: Remover membro localmente
-      const updatedMembers = members.filter(member => member.id !== selectedMemberToDelete.id);
-      setMembers(updatedMembers);
+      // Try to make API request to remove the member from the team
+      await axios.delete(`${API_URL}/teams/${teamId}/users/${selectedMemberToDelete?.id}`);
+      // Refresh members
+      await fetchMembers();
       toast.success('Member removed from team');
       setConfirmDeleteModal(false);
       setSelectedMemberToDelete(null);
@@ -84,10 +100,16 @@ const TeamDetail = () => {
     return (
       <div className="fixed inset-0 flex h-screen w-screen items-center justify-center gap-10 bg-[rgba(0,0,0,0.5)]">
         <p className="animate-bounce text-[14rem] text-white transition-all duration-700">.</p>
-        <p className="animate-bounce text-[14rem] text-white transition-all duration-700" style={{ animationDelay: '300ms' }}>
+        <p
+          className="animate-bounce text-[14rem] text-white transition-all duration-700"
+          style={{ animationDelay: '300ms' }}
+        >
           .
         </p>
-        <p className="animate-bounce text-[14rem] text-white transition-all duration-700" style={{ animationDelay: '600ms' }}>
+        <p
+          className="animate-bounce text-[14rem] text-white transition-all duration-700"
+          style={{ animationDelay: '600ms' }}
+        >
           .
         </p>
       </div>
@@ -144,21 +166,27 @@ const TeamDetail = () => {
       )}
 
       {/* Add Member Modal */}
-      <CustomModal isOpen={modalOpen} title={'Add Member to Team'} onClose={() => setModalOpen(false)}>
+      <CustomModal
+        isOpen={modalOpen}
+        title={'Add Member to Team'}
+        onClose={() => setModalOpen(false)}
+      >
         <AddUserToTeam
           teamId={teamId}
           inviteCode={team?.inviteCode}
           onClose={() => {
             setModalOpen(false);
+            // Refresh members when a new member is added
+            fetchMembers();
             toast.success('Member added successfully');
           }}
         />
       </CustomModal>
 
       {/* Confirm Delete Modal */}
-      <CustomModal 
-        isOpen={confirmDeleteModal} 
-        title={'Confirm Delete'} 
+      <CustomModal
+        isOpen={confirmDeleteModal}
+        title={'Confirm Delete'}
         onClose={() => {
           setConfirmDeleteModal(false);
           setSelectedMemberToDelete(null);
@@ -166,7 +194,11 @@ const TeamDetail = () => {
       >
         <div className="flex flex-col items-center justify-center gap-4 px-4">
           <p className="text-center text-sm text-gray-700">
-            Are you sure you want to remove <strong>{selectedMemberToDelete?.firstName} {selectedMemberToDelete?.lastName}</strong> from the team?
+            Are you sure you want to remove{' '}
+            <strong>
+              {selectedMemberToDelete?.firstName} {selectedMemberToDelete?.lastName}
+            </strong>{' '}
+            from the team?
           </p>
           <div className="flex w-full gap-2">
             <CustomButton
@@ -180,7 +212,7 @@ const TeamDetail = () => {
             </CustomButton>
             <CustomButton
               onClick={handleConfirmDelete}
-              className="flex-1 rounded-lg bg-mauaBlue px-3 py-1 text-xs text-white transition-colors hover:bg-blue-700"
+              className="bg-mauaBlue flex-1 rounded-lg px-3 py-1 text-xs text-white transition-colors hover:bg-blue-700"
             >
               Delete
             </CustomButton>
