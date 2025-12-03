@@ -18,8 +18,11 @@ function TournamentCreate({ onClose, tournament }) {
     try {
       tournament
         ? await axios.put(`${import.meta.env.VITE_API_URL}/tournaments/${tournament.id}`, {
+            id: tournament.id,
             name,
+            invite: tournament.invite,
             address,
+            status: tournament.status,
             startTime,
             endTime,
           })
