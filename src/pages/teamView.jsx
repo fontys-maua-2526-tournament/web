@@ -2,7 +2,7 @@ import CustomButton from '../components/customButton';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { LucidePlusCircle } from 'lucide-react';
+import { LucidePlusCircle, PenLine } from 'lucide-react';
 import CustomModal from '../components/customModal';
 import TeamCreate from './teamCreate';
 
@@ -10,6 +10,7 @@ const TeamViewer = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState(null);
 
   const fetchTeams = async () => {
     setLoading(true);
@@ -66,7 +67,8 @@ const TeamViewer = () => {
         </CustomButton>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+      {/* <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3"> */}
+      <div className="flex flex-col gap-8">
         {teams.map(team => (
           // <Link
           //   key={team.id}
@@ -86,14 +88,29 @@ const TeamViewer = () => {
 
             <div className="flex flex-1 items-center justify-between px-6">
               <span className="text-lg font-semibold text-black">{team.name}</span>
-              <span>
+              <div className="flex items-center justify-center gap-4">
                 <strong className="text-black">Code:</strong> {team.inviteCode}
-              </span>
+                <div
+                  onClick={() => setSelectedTeam(team)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg shadow-xl duration-200 hover:bg-[#0000006a]"
+                >
+                  <PenLine className="h-5 w-5 text-black" />
+                </div>
+              </div>
             </div>
           </Link>
         ))}
       </div>
 
+      <CustomModal isOpen={!!selectedTeam} title="Edit Team" onClose={() => setSelectedTeam(null)}>
+        <TeamCreate
+          team={selectedTeam}
+          onClose={() => {
+            setSelectedTeam(null);
+            fetchTeams();
+          }}
+        />
+      </CustomModal>
       <CustomModal isOpen={modalOpen} title={'Create a Team'} onClose={() => setModalOpen(false)}>
         <TeamCreate
           onClose={() => {

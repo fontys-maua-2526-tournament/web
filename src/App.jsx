@@ -10,9 +10,9 @@ import Sidebar from './components/sidebar/Sidebar';
 import TeamViewer from './pages/teamView';
 import TeamDetail from './pages/teamDetail.jsx';
 import TournamentView from './pages/TournamentView';
-import Sidebar from './components/sidebar/Sidebar';
 import TeamCreate from './pages/teamCreate';
 import TournamentDetails from './pages/TournamentDetails';
+import { UserProvider } from './context/userContext';
 import TournamentCreate from './pages/TournamentCreate';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +23,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen">
+    <UserProvider>
       <Sidebar hideIcons={isLoginPage} />
       <ToastContainer
         position="top-right"
@@ -52,6 +53,7 @@ export default function App() {
           <Route path="/coach/teams/view" element={<CoachTeamView />} />
         </Routes>
       </div>
+    </UserProvider>
     </div>
   );
 }

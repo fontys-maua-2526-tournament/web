@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { LucidePlusCircle } from 'lucide-react';
+import { LucidePlusCircle, PenLine } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import TournamentCreate from './TournamentCreate';
 import CustomModal from '../components/customModal';
@@ -17,6 +17,7 @@ function TournamentView() {
   const [startDateFilter, setStartDateFilter] = useState('');
   const [endDateFilter, setEndDateFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedTournament, setSelectedTournament] = useState(null);
 
   const fetchTournaments = async () => {
     setLoading(true);
@@ -151,11 +152,44 @@ function TournamentView() {
 
             <div className="flex flex-1 items-center justify-between px-6">
               <span className="text-lg font-semibold text-black">{tournament.name}</span>
-              <StatusBadge status={tournament.status} />
+              <div className="flex items-center justify-center gap-4">
+                <StatusBadge status={tournament.status} />
+                <div
+                  onClick={() => setSelectedTournament(tournament)}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg shadow-xl duration-200 hover:bg-[#0000006a]"
+                >
+                  <PenLine className="h-5 w-5 text-black" />
+                </div>
+              </div>
             </div>
           </Link>
         ))}
       </div>
+      {selectedTournament && (
+        <CustomModal
+          isOpen={!!selectedTournament}
+          onClose={() => setSelectedTournament(null)}
+          title="Edit Tournament"
+        >
+          <TournamentCreate
+            tournament={selectedTournament}
+            onClose={() => {
+              setSelectedTournament(null);
+              fetchTournaments();
+            }}
+          />
+        </CustomModal>
+      )}
+      {modalOpen && (
+        <CustomModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Add Tournament">
+          <TournamentCreate
+            onClose={() => {
+              setModalOpen(false);
+              fetchTournaments();
+            }}
+          />
+        </CustomModal>
+      )}
     </div>
   );
 }
