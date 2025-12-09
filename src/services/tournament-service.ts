@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8080/api/tournaments";//should change the port if incorrect
+const API_URL = "http://localhost:8080/tournaments";//should change the port if incorrect
 
 export async function getAllTournaments() {
   const res = await fetch(API_URL);
@@ -21,7 +21,14 @@ export async function createTournament(tournament: {
   return await res.json();
 }
 
-export async function deleteTournament(id: number) {
-  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Error deleting tournament");
+export async function getTournamentById(id: number) {
+  const res = await fetch(`${API_URL}/${id}`);
+  if (!res.ok) throw new Error("Error retrieving tournament");
+  return await res.json();
+}
+
+export async function cancelTournament(id: number) {
+  const res = await fetch(`${API_URL}/cancel/${id}`, { method: "PUT" });
+  if (!res.ok) throw new Error("Error canceling tournament");
+  return await res.json();
 }

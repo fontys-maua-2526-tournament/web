@@ -2,13 +2,11 @@ import { BrowserRouter } from 'react-router-dom';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/home';
 import Login from './pages/login';
-import Register from './pages/register';
 import Sidebar from './components/sidebar/Sidebar';
 import TeamViewer from './pages/teamView';
 import TeamCreate from './pages/teamCreate';
 import TournamentView from './pages/TournamentView';
 import TournamentDetails from './pages/TournamentDetails';
-import TournamentCreate from './pages/TournamentCreate';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -34,12 +32,10 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/teams/view" element={<TeamViewer />} />
             <Route path="/teams/new" element={<TeamCreate />} />
             <Route path="/tournaments" element={<TournamentView />} />
             <Route path="/tournaments/:id" element={<TournamentDetails />} />
-            <Route path="/tournaments/create" element={<TournamentCreate />} />
           </Routes>
         </div>
       </div>
