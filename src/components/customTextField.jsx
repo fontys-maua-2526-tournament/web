@@ -8,6 +8,7 @@ export default function CustomTextField({
   value,
   onChange,
   placeholder,
+  type,
   blocked = false,
   className = '',
   disabled = false,
@@ -55,7 +56,7 @@ export default function CustomTextField({
           readOnly={readOnly || isBlocked}
           disabled={disabled || isBlocked}
           aria-disabled={isBlocked}
-          className={`w-full rounded-2xl border border-gray-300 bg-white pr-12 ${sizeClasses} focus:ring-mauaBlue focus:ring-2 focus:outline-none ${isBlocked ? 'cursor-not-allowed opacity-60' : ''}`}
+          className={`w-full rounded-2xl border border-gray-300 bg-white pr-12 ${sizeClasses} focus:ring-mauaBlue focus:ring-2 focus:outline-none ${isBlocked ? 'cursor-not-allowed opacity-60' : ''} text-gray-400`}
           {...inputProps}
         />
 

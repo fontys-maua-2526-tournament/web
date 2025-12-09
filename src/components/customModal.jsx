@@ -36,7 +36,7 @@ export default function CustomModal({ isOpen, onClose, title, children }) {
       onClick={handleClose}
     >
       <div
-        className={`z-[90] w-11/12 max-w-2xl rounded-2xl bg-white p-6 shadow-lg shadow-black/30 ${loaded ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-full scale-90 opacity-0'} duration-300`}
+        className={`z-[90] w-11/12 max-w-4xl rounded-2xl bg-white p-8 shadow-lg shadow-black/30 ${loaded ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-full scale-90 opacity-0'} duration-300`}
         onClick={e => e.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">

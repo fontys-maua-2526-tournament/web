@@ -1,0 +1,226 @@
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { LucidePlusCircle, LucideTrash2 } from 'lucide-react';
+import CustomButton from '../components/customButton';
+import CustomModal from '../components/customModal';
+import AddUserToTeam from './addUserToTeam';
+import { toast } from 'react-toastify';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+
+const TeamDetail = () => {
+  const { teamId } = useParams();
+  const [team, setTeam] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
+  const [selectedMemberToDelete, setSelectedMemberToDelete] = useState(null);
+
+  const fetchMembers = async () => {
+    try {
+      // Attempt to get members from /teams/{teamId}/users
+      const membersRes = await axios.get(`${API_URL}/teams/${teamId}/users`);
+      const membersData = membersRes.data;
+      // Support multiple shapes: array directly, or { users: [] }
+      const list = Array.isArray(membersData)
+        ? membersData
+        : membersData.users || membersData.data || [];
+      setMembers(list);
+    } catch (error) {
+      console.error('Failed to fetch team members:', error);
+      toast.error('Failed to fetch team members');
+      setMembers([]);
+    }
+  };
+
+  const fetchTeamDetails = async () => {
+    setLoading(true);
+    try {
+      // Get team basic data from /teams/{teamId} if available
+      try {
+        const { data } = await axios.get(`${API_URL}/teams/${teamId}`);
+        // if API returns the team object directly
+        if (data && data.id) {
+          setTeam(data);
+        } else if (data && Array.isArray(data.teams)) {
+          // fallback if API returns list of teams
+          const found = data.teams.find(t => t.id === parseInt(teamId));
+          setTeam(found || null);
+        } else {
+          setTeam(null);
+        }
+      } catch (err) {
+        // fallback to fetching all teams and finding by id
+        const { data } = await axios.get(`${API_URL}/teams`);
+        const foundTeam = data.teams
+          ? data.teams.find(t => t.id === parseInt(teamId))
+          : Array.isArray(data)
+            ? data.find(t => t.id === parseInt(teamId))
+            : null;
+        setTeam(foundTeam || null);
+      }
+
+      // Now fetch members for the team (if any)
+      await fetchMembers();
+    } catch (error) {
+      console.error('Failed to fetch team details:', error);
+      toast.error('Failed to fetch team details');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeamDetails();
+  }, [teamId]);
+
+  const handleRemoveMemberClick = member => {
+    setSelectedMemberToDelete(member);
+    setConfirmDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      // Try to make API request to remove the member from the team
+      await axios.delete(`${API_URL}/teams/${teamId}/users/${selectedMemberToDelete?.id}`);
+      // Refresh members
+      await fetchMembers();
+      toast.success('Member removed from team');
+      setConfirmDeleteModal(false);
+      setSelectedMemberToDelete(null);
+    } catch (error) {
+      console.error('Failed to remove member:', error);
+      toast.error('Failed to remove member');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 flex h-screen w-screen items-center justify-center gap-10 bg-[rgba(0,0,0,0.5)]">
+        <p className="animate-bounce text-[14rem] text-white transition-all duration-700">.</p>
+        <p
+          className="animate-bounce text-[14rem] text-white transition-all duration-700"
+          style={{ animationDelay: '300ms' }}
+        >
+          .
+        </p>
+        <p
+          className="animate-bounce text-[14rem] text-white transition-all duration-700"
+          style={{ animationDelay: '600ms' }}
+        >
+          .
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="m-10 flex flex-1 flex-col p-8">
+      {/* Title */}
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-4xl font-bold text-gray-900">{team?.name || 'Team'}</h1>
+
+        <CustomButton
+          onClick={() => setModalOpen(true)}
+          className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
+        >
+          <LucidePlusCircle className="h-5 w-5" />
+          Add Member
+        </CustomButton>
+      </div>
+
+      {/* Team Members Grid */}
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+        {members.map(member => (
+          <div
+            key={member.id}
+            className="flex h-20 items-center overflow-hidden rounded-xl bg-[#BDADC0] shadow-md transition-all duration-200 hover:bg-[#9A8FA0] hover:shadow-xl"
+          >
+            <div className="bg-fontyssPurple h-full w-6" />
+
+            <div className="flex flex-1 items-center justify-between px-6">
+              <div>
+                <span className="text-lg font-semibold text-black">
+                  {member.firstName} {member.lastName}
+                </span>
+                <p className="text-sm text-gray-700">{member.email}</p>
+              </div>
+              <button
+                onClick={() => handleRemoveMemberClick(member)}
+                className="text-black transition-colors hover:text-gray-700"
+                title="Remove member"
+              >
+                <LucideTrash2 className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {members.length === 0 && (
+        <div className="text-center text-gray-500">
+          <p>No members in this team yet</p>
+        </div>
+      )}
+
+      {/* Add Member Modal */}
+      <CustomModal
+        isOpen={modalOpen}
+        title={'Add Member to Team'}
+        onClose={() => setModalOpen(false)}
+      >
+        <AddUserToTeam
+          teamId={teamId}
+          inviteCode={team?.inviteCode}
+          onClose={() => {
+            setModalOpen(false);
+            // Refresh members when a new member is added
+            fetchMembers();
+            toast.success('Member added successfully');
+          }}
+        />
+      </CustomModal>
+
+      {/* Confirm Delete Modal */}
+      <CustomModal
+        isOpen={confirmDeleteModal}
+        title={'Confirm Delete'}
+        onClose={() => {
+          setConfirmDeleteModal(false);
+          setSelectedMemberToDelete(null);
+        }}
+      >
+        <div className="flex flex-col items-center justify-center gap-4 px-4">
+          <p className="text-center text-sm text-gray-700">
+            Are you sure you want to remove{' '}
+            <strong>
+              {selectedMemberToDelete?.firstName} {selectedMemberToDelete?.lastName}
+            </strong>{' '}
+            from the team?
+          </p>
+          <div className="flex w-full gap-2">
+            <CustomButton
+              onClick={() => {
+                setConfirmDeleteModal(false);
+                setSelectedMemberToDelete(null);
+              }}
+              className="flex-1 rounded-lg bg-gray-400 px-3 py-1 text-xs text-white transition-colors hover:bg-gray-500"
+            >
+              Cancel
+            </CustomButton>
+            <CustomButton
+              onClick={handleConfirmDelete}
+              className="bg-mauaBlue flex-1 rounded-lg px-3 py-1 text-xs text-white transition-colors hover:bg-blue-700"
+            >
+              Delete
+            </CustomButton>
+          </div>
+        </div>
+      </CustomModal>
+    </div>
+  );
+};
+
+export default TeamDetail;
