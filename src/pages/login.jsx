@@ -33,7 +33,7 @@ export default function Login() {
       console.error(err);
 
       const message = err.response?.data?.message || 'Login failed';
-
+      // either git is bugged or i bugged it
       setError(message);
       toast.error(message);
     } finally {
