@@ -76,13 +76,13 @@ function TournamentView() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-900">My Tournaments</h1>
 
-        <CustomButton
-          onClick={() => setModalOpen(true)}
+        <Link
+          to="/tournaments/create"
           className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
         >
           <LucidePlusCircle className="h-5 w-5" />
           Add Tournament
-        </CustomButton>
+        </Link>
       </div>
 
       {/* Filter Bar */}
@@ -144,7 +144,7 @@ function TournamentView() {
         {filteredTournaments.map(tournament => (
           <Link
             key={tournament.id}
-            // to={`/tournaments/${tournament.id}`}
+            to={`/tournaments/${tournament.id}`}
             className="flex h-20 items-center overflow-hidden rounded-xl bg-[#BDADC0] shadow-md transition-all duration-200 hover:-translate-y-1 hover:bg-[#9A8FA0] hover:shadow-xl"
           >
             <div className="bg-fontyssPurple h-full w-6" />
@@ -156,16 +156,6 @@ function TournamentView() {
           </Link>
         ))}
       </div>
-      {modalOpen && (
-        <CustomModal isOpen={modalOpen} onClose={() => setModalOpen(false)} title="Add Tournament">
-          <TournamentCreate
-            onClose={() => {
-              setModalOpen(false);
-              fetchTournaments();
-            }}
-          />
-        </CustomModal>
-      )}
     </div>
   );
 }
