@@ -1,7 +1,7 @@
 import CustomButton from '../components/customButton';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { getAllTeams } from '../services/team-service';
 import { LucidePlusCircle } from 'lucide-react';
 import CustomModal from '../components/customModal';
 import TeamCreate from './teamCreate';
@@ -13,12 +13,10 @@ const TeamViewer = () => {
 
   const fetchTeams = async () => {
     setLoading(true);
-    const options = { method: 'GET', url: `http://localhost:8080/teams` };
 
     try {
-      const { data } = await axios.request(options);
-      console.log(data);
-      setTeams(data.teams);
+      const data = await getAllTeams();
+      setTeams(data.teams || data);
     } catch (error) {
       console.error('Failed to fetch teams:', error);
       setTeams([]);

@@ -1,6 +1,8 @@
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import { useState, useEffect } from 'react';
+import { getAllUsers } from '../services/user-service';
+import { addUserToTeam } from '../services/team-service';
 import { toast } from 'react-toastify';
 
 
@@ -26,18 +28,7 @@ function AddUserToTeam({ teamId, inviteCode, onClose }) {
         return;
       }
 
-      const addRes = await fetch(`http://localhost:8080/teams/${teamId}/users`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: parseInt(userId) }),
-      });
-
-      if (!addRes.ok) {
-        const errText = await addRes.text();
-        throw new Error(errText || 'Failed to add user to team');
-      }
-
-      const result = await addRes.json();
+      await addUserToTeam(teamId, parseInt(userId));
       toast.success(`User ${selectedUser.firstName} added to team successfully`);
       setUserId('');
       onClose();
@@ -55,11 +46,8 @@ function AddUserToTeam({ teamId, inviteCode, onClose }) {
       setUsersLoading(true);
       setUsersError(null);
       try {
-        const res = await fetch('http://localhost:8080/users');
-        if (!res.ok) throw new Error('Failed to fetch users');
-        const data = await res.json();
-
-        setAvailableUsers(Array.isArray(data) ? data : data.users || []);
+        const users = await getAllUsers();
+        setAvailableUsers(users);
       } catch (err) {
         console.error('Error fetching users:', err);
         setUsersError(err.message || 'Error fetching users');
