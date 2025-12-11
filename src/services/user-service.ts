@@ -1,68 +1,46 @@
-const API_URL = "http://localhost:8080/users"; //should change the port if incorrect
+import api from './api';
 
-export async function register(userData: {
-  name: string;
+const API_URL = '/users';
+
+export async function register(userData: { name: string; email: string; password: string }) {
+  const response = await api.post(`${API_URL}/register`, userData);
+  return response.data;
+}
+
+export async function registerWithDetails(userData: {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  userRole: string;
 }) {
-  const res = await fetch(`${API_URL}/register`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userData),
-  });
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Error registering user");
-  }
-  return await res.json();
+  const response = await api.post('/auth/register', userData);
+  return response.data;
 }
 
 export async function login(email: string, password: string) {
-  const res = await fetch(`${API_URL}/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.message || "Error logging in");
-  }
-  return await res.json();
+  const response = await api.post(`/auth/login`, { email, password });
+  return response.data;
 }
 
-export async function getUserProfile(id: number, token: string) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) throw new Error("Error fetching user profile");
-  return await res.json();
+export async function getAllUsers() {
+  const response = await api.get(API_URL);
+  return Array.isArray(response.data) ? response.data : response.data.users || [];
 }
 
-export async function updateProfile(id: number, userData: any, token: string) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(userData),
-  });
-  if (!res.ok) throw new Error("Error updating profile");
-  return await res.json();
+export async function getUserProfile(id: number) {
+  const response = await api.get(`${API_URL}/${id}`);
+  return response.data;
 }
 
-export async function deleteUser(id: number, token: string) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) throw new Error("Error deleting user");
-  return await res.json();
+export async function updateProfile(id: number, userData: any) {
+  const response = await api.put(`${API_URL}/${id}`, userData);
+  return response.data;
+}
+
+export async function deleteUser(id: number) {
+  const response = await api.delete(`${API_URL}/${id}`);
+  return response.data;
 }

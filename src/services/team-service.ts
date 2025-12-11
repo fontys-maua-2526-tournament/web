@@ -1,22 +1,44 @@
-const API_URL = "http://localhost:8080/api/teams"; //should change the port if incorrect
+import api from './api';
+
+const API_URL = '/teams';
 
 export async function getAllTeams() {
-  const res = await fetch(API_URL);
-  if (!res.ok) throw new Error("Error fetching teams");
-  return await res.json();
+  const response = await api.get(API_URL);
+  return response.data;
 }
 
-export async function createTeam(team: { name: string }) {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(team),
-  });
-  if (!res.ok) throw new Error("Error creating team");
-  return await res.json();
+export async function getTeamById(id: number | string) {
+  const response = await api.get(`${API_URL}/${id}`);
+  return response.data;
+}
+
+export async function createTeam(team: { name: string; inviteCode?: string }) {
+  const response = await api.post(API_URL + '/create', team);
+  return response.data;
+}
+
+export async function updateTeam(id: number, team: { name: string; inviteCode?: string }) {
+  const response = await api.put(`${API_URL}/${id}`, team);
+  return response.data;
 }
 
 export async function deleteTeam(id: number) {
-  const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  if (!res.ok) throw new Error("Error deleting team");
+  const response = await api.delete(`${API_URL}/${id}`);
+  return response.data;
+}
+
+export async function getTeamMembers(teamId: number | string) {
+  const response = await api.get(`${API_URL}/${teamId}/users`);
+  const data = response.data;
+  return Array.isArray(data) ? data : data.users || data.data || [];
+}
+
+export async function addUserToTeam(teamId: number | string, userId: number) {
+  const response = await api.post(`${API_URL}/${teamId}/users`, { userId });
+  return response.data;
+}
+
+export async function removeUserFromTeam(teamId: number | string, userId: number | string) {
+  const response = await api.delete(`${API_URL}/${teamId}/users/${userId}`);
+  return response.data;
 }
