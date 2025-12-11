@@ -1,13 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import { getTeamById, getAllTeams, getTeamMembers, removeUserFromTeam } from '../services/team-service';
 import { LucidePlusCircle, LucideTrash2 } from 'lucide-react';
 import CustomButton from '../components/customButton';
 import CustomModal from '../components/customModal';
 import AddUserToTeam from './addUserToTeam';
 import { toast } from 'react-toastify';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 const TeamDetail = () => {
   const { teamId } = useParams();
@@ -20,13 +18,7 @@ const TeamDetail = () => {
 
   const fetchMembers = async () => {
     try {
-      // Attempt to get members from /teams/{teamId}/users
-      const membersRes = await axios.get(`${API_URL}/teams/${teamId}/users`);
-      const membersData = membersRes.data;
-      // Support multiple shapes: array directly, or { users: [] }
-      const list = Array.isArray(membersData)
-        ? membersData
-        : membersData.users || membersData.data || [];
+      const list = await getTeamMembers(teamId);
       setMembers(list);
     } catch (error) {
       console.error('Failed to fetch team members:', error);
@@ -40,7 +32,7 @@ const TeamDetail = () => {
     try {
       // Get team basic data from /teams/{teamId} if available
       try {
-        const { data } = await axios.get(`${API_URL}/teams/${teamId}`);
+        const data = await getTeamById(teamId);
         // if API returns the team object directly
         if (data && data.id) {
           setTeam(data);
@@ -53,7 +45,7 @@ const TeamDetail = () => {
         }
       } catch (err) {
         // fallback to fetching all teams and finding by id
-        const { data } = await axios.get(`${API_URL}/teams`);
+        const data = await getAllTeams();
         const foundTeam = data.teams
           ? data.teams.find(t => t.id === parseInt(teamId))
           : Array.isArray(data)
@@ -84,7 +76,7 @@ const TeamDetail = () => {
   const handleConfirmDelete = async () => {
     try {
       // Try to make API request to remove the member from the team
-      await axios.delete(`${API_URL}/teams/${teamId}/users/${selectedMemberToDelete?.id}`);
+      await removeUserFromTeam(teamId, selectedMemberToDelete?.id);
       // Refresh members
       await fetchMembers();
       toast.success('Member removed from team');

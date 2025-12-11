@@ -2,7 +2,7 @@ import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
-import axios from 'axios';
+import { createTournament, updateTournament } from '../services/tournament-service';
 import { toast } from 'react-toastify';
 
 function TournamentCreate({ onClose, tournament }) {
@@ -17,7 +17,7 @@ function TournamentCreate({ onClose, tournament }) {
     }
     try {
       tournament
-        ? await axios.put(`${import.meta.env.VITE_API_URL}/tournaments/${tournament.id}`, {
+        ? await updateTournament(tournament.id, {
             id: tournament.id,
             name,
             invite: tournament.invite,
@@ -26,7 +26,7 @@ function TournamentCreate({ onClose, tournament }) {
             startTime,
             endTime,
           })
-        : await axios.post(`${import.meta.env.VITE_API_URL}/tournaments`, {
+        : await createTournament({
             name,
             address,
             startTime,
@@ -38,7 +38,10 @@ function TournamentCreate({ onClose, tournament }) {
       );
     } catch (error) {
       console.error(error);
-      toast.error(tournament ? 'Failed to update tournament.' : 'Failed to create tournament.');
+      toast.error(
+        error.message ||
+          (tournament ? 'Failed to update tournament.' : 'Failed to create tournament.'),
+      );
     } finally {
       onClose();
     }

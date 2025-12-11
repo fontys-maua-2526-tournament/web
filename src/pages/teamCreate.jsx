@@ -1,7 +1,7 @@
 import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import { useState } from 'react';
-import axios from 'axios';
+import { createTeam, updateTeam } from '../services/team-service';
 import { v4 as uuid } from 'uuid';
 import { toast } from 'react-toastify';
 
@@ -16,17 +16,17 @@ function TeamCreate({ onClose, team }) {
     }
     try {
       if (team) {
-        await axios.put(`${import.meta.env.VITE_API_URL}/teams/${team.id}`, {
+        await updateTeam(team.id, {
           name,
           inviteCode: code,
         });
         toast.success('Team updated');
       } else {
-        await axios.post(`${import.meta.env.VITE_API_URL}/teams/create`, {
+        await createTeam({
           name,
           inviteCode: code,
         });
-      toast.success('Team created');
+        toast.success('Team created');
       }
     } catch (error) {
       console.error('Failed to create team:', error);
