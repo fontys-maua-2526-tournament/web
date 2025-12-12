@@ -2,13 +2,21 @@ import CustomButton from '../components/customButton';
 import CustomTextField from '../components/customTextField';
 import CustomModal from '../components/customModal';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [textExample, setTextExample] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const token = localStorage.getItem('authToken');
+  const navigate = useNavigate();
 
   return (
     <div className="flex h-screen items-center justify-center">
+      {!token && (
+        <div className="fixed top-6 right-6 z-50">
+          <CustomButton onClick={() => navigate('/login')}>Sign-in</CustomButton>
+        </div>
+      )}
       <div className="flex flex-col items-center gap-6">
         <h1 className="text-3xl font-bold text-black duration-300 hover:-translate-y-1.5 hover:scale-110 hover:cursor-pointer">
           This is the home screen with Tailwind CSS!

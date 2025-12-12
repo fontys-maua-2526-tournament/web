@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { cancelTournament, getTournamentById } from '../services/tournament-service';
-import { Trash } from 'lucide-react';
+import { Trash, PenLine, ChevronRight } from 'lucide-react'; // Added ChevronRight for the arrow
 import CustomModal from '../components/customModal';
 import TournamentCreate from './TournamentCreate';
 import StatusBadge from '../components/StatusBadge';
-import { PenLine } from 'lucide-react';
+import { useUser } from '../app/hooks/use-user';
 
 function TournamentDetails() {
   const { id } = useParams();
@@ -16,6 +16,9 @@ function TournamentDetails() {
   const [editModal, setEditModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [canceling, setCanceling] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const role = useUser().role;
 
   const fetchTournament = async () => {
     setLoading(true);
@@ -66,14 +69,14 @@ function TournamentDetails() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">{tournament.name}</h1>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => {
-              setEditModal(true);
-            }}
-            className="bg-mauaBlue hover:bg-fontyssPurple flex h-10 w-10 items-center justify-center rounded-xl shadow-2xs duration-200 hover:-translate-y-1 hover:cursor-pointer"
-          >
-            <PenLine className="h-5 w-5 text-white" />
-          </button>
+          {role === 'ORGANIZER' && (
+            <button
+              onClick={() => setEditModal(true)}
+              className="bg-mauaBlue hover:bg-fontyssPurple flex h-10 w-10 items-center justify-center rounded-xl shadow-2xs duration-200 hover:-translate-y-1 hover:cursor-pointer"
+            >
+              <PenLine className="h-5 w-5 text-white" />
+            </button>
+          )}
           <Link
             to="/tournaments"
             className="rounded-lg bg-gray-200 px-4 py-2 text-gray-700 transition hover:bg-gray-300"
@@ -83,59 +86,78 @@ function TournamentDetails() {
         </div>
       </div>
 
-      {/* Details Card */}
-      <div className="space-y-4 rounded-xl bg-white p-6 shadow-md">
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-600">Address:</span>
-          <span className="text-gray-900">{tournament.address}</span>
-        </div>
+      {/* Details Drawer */}
+      <div className="relative mb-4">
+        <button
+          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
+          className="flex w-full cursor-pointer items-center justify-between gap-2 rounded-lg bg-white px-4 py-3 text-black shadow transition hover:bg-gray-50"
+        >
+          <span className="font-medium">Tournament Details</span>
+          <ChevronRight
+            className={`h-5 w-5 transition-transform duration-300 ${isDrawerOpen ? 'rotate-90' : ''}`}
+          />
+        </button>
 
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-600">Start Time:</span>
-          <span className="text-gray-900">{new Date(tournament.startTime).toLocaleString()}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-600">End Time:</span>
-          <span className="text-gray-900">{new Date(tournament.endTime).toLocaleString()}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="font-medium text-gray-600">Status:</span>
-          <StatusBadge status={tournament.status} />
-        </div>
-
-        {tournament.invite && (
-          <div className="flex items-center gap-2">
-            <label className="font-medium text-gray-600">Invite Code:</label>
-            <input
-              type="text"
-              readOnly
-              value={tournament.invite}
-              className="flex-1 rounded-lg border border-gray-300 p-2 text-gray-900"
-            />
-            <div className="flex justify-between gap-2">
-              <button
-                onClick={handleCopyInvite}
-                className="rounded-lg bg-blue-600 px-3 py-2 text-white transition hover:bg-blue-700"
-              >
-                {copied ? 'Copied!' : 'Copy'}
-              </button>
-
-              {tournament.status != 'CANCELLED' && (
-                <button
-                  onClick={() => setShowCancelModal(true)}
-                  className="rounded-lg border border-red-600 px-3 py-2 text-red-600 transition hover:bg-red-600 hover:text-white"
-                >
-                  <Trash />
-                </button>
-              )}
+        <div
+          className={`w-full overflow-hidden transition-all duration-300 ease-in-out ${
+            isDrawerOpen ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="mt-2 mb-4 space-y-4 rounded-xl bg-white p-6 shadow-md">
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Address:</span>
+              <span className="text-gray-900">{tournament.address}</span>
             </div>
+
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Start Time:</span>
+              <span className="text-gray-900">
+                {new Date(tournament.startTime).toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">End Time:</span>
+              <span className="text-gray-900">{new Date(tournament.endTime).toLocaleString()}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="font-medium text-gray-600">Status:</span>
+              <StatusBadge status={tournament.status} />
+            </div>
+
+            {tournament.invite && (
+              <div className="flex items-center gap-2">
+                <label className="font-medium text-gray-600">Invite Code:</label>
+                <input
+                  type="text"
+                  readOnly
+                  value={tournament.invite}
+                  className="flex-1 rounded-lg border border-gray-300 p-2 text-gray-900"
+                />
+                <div className="flex justify-between gap-2">
+                  <button
+                    onClick={handleCopyInvite}
+                    className="rounded-lg bg-blue-600 px-3 py-2 text-white transition hover:bg-blue-700"
+                  >
+                    {copied ? 'Copied!' : 'Copy'}
+                  </button>
+
+                  {tournament.status !== 'CANCELLED' && (
+                    <button
+                      onClick={() => setShowCancelModal(true)}
+                      className="rounded-lg border border-red-600 px-3 py-2 text-red-600 transition hover:bg-red-600 hover:text-white"
+                    >
+                      <Trash className="h-5 w-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Cancel Confirmation Modal */}
       <CustomModal
         isOpen={showCancelModal}
         onClose={() => setShowCancelModal(false)}
@@ -165,6 +187,7 @@ function TournamentDetails() {
           </>
         )}
       </CustomModal>
+
       {editModal && (
         <CustomModal isOpen={editModal} onClose={() => setEditModal(false)}>
           <TournamentCreate

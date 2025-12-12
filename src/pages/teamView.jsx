@@ -5,12 +5,15 @@ import { getAllTeams } from '../services/team-service';
 import { LucidePlusCircle, PenLine } from 'lucide-react';
 import CustomModal from '../components/customModal';
 import TeamCreate from './teamCreate';
+import { useUser } from '../app/hooks/use-user';
 
 const TeamViewer = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState(null);
+  const token = localStorage.getItem('authToken');
+  const role = useUser().role;
 
   const fetchTeams = async () => {
     setLoading(true);
@@ -56,13 +59,15 @@ const TeamViewer = () => {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-900">My Teams</h1>
 
-        <CustomButton
-          onClick={() => setModalOpen(true)}
-          className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
-        >
-          <LucidePlusCircle className="h-5 w-5" />
-          Add Team
-        </CustomButton>
+        {token && role === 'ORGANIZER' && (
+          <CustomButton
+            onClick={() => setModalOpen(true)}
+            className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
+          >
+            <LucidePlusCircle className="h-5 w-5" />
+            Add Team
+          </CustomButton>
+        )}
       </div>
 
       {/* <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3"> */}
@@ -88,12 +93,6 @@ const TeamViewer = () => {
               <span className="text-lg font-semibold text-black">{team.name}</span>
               <div className="flex items-center justify-center gap-4">
                 <strong className="text-black">Code:</strong> {team.inviteCode}
-                <div
-                  onClick={() => setSelectedTeam(team)}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg shadow-xl duration-200 hover:bg-[#0000006a]"
-                >
-                  <PenLine className="h-5 w-5 text-black" />
-                </div>
               </div>
             </div>
           </Link>

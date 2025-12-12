@@ -2,15 +2,23 @@ import CustomTextField from '../components/customTextField';
 import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/user-service';
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import CustomButton from '../components/customButton';
+import { useEffect } from 'react';
+import { useUser } from '../app/hooks/use-user';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { setUserContext } = useUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const handleLogin = async e => {
     e.preventDefault();
@@ -26,8 +34,7 @@ export default function Login() {
 
       // Store token in localStorage
       localStorage.setItem('authToken', response.token);
-      localStorage.setItem('userId', response.userId);
-      localStorage.setItem('userName', response.name);
+      setUserContext(response.token, response.email, response.role);
 
       // Redirect to tournaments
       navigate('/tournaments');
@@ -39,8 +46,8 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white">
-      <div className="from-fontyssPurple to-mauaBlue w-400px rounded-2xl bg-linear-to-b p-10 text-center text-white shadow-lg">
+    <div className="flex max-h-screen min-h-[94vh] grow-0 items-center justify-center">
+      <div className="from-fontyssPurple to-mauaBlue my-auto w-2/5 rounded-2xl bg-linear-to-b p-10 text-center text-white shadow-lg">
         <div className="mb-3 flex-col justify-center">
           <div className="mb-6 flex justify-center">
             <img src="" alt="Logo" />

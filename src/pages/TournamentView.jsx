@@ -6,6 +6,7 @@ import StatusBadge from '../components/StatusBadge';
 import TournamentCreate from './TournamentCreate';
 import CustomModal from '../components/customModal';
 import CustomButton from '../components/customButton';
+import { useUser } from '../app/hooks/use-user';
 
 function TournamentView() {
   const [tournaments, setTournaments] = useState([]);
@@ -17,6 +18,8 @@ function TournamentView() {
   const [startDateFilter, setStartDateFilter] = useState('');
   const [endDateFilter, setEndDateFilter] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
+  const token = localStorage.getItem('authToken');
+  const role = useUser().role;
 
   const fetchTournaments = async () => {
     setLoading(true);
@@ -73,15 +76,19 @@ function TournamentView() {
       )}
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="text-4xl font-bold text-gray-900">My Tournaments</h1>
+        <h1 className="text-4xl font-bold text-gray-900">
+          {role === 'ORGANIZER' ? 'My Tournaments' : 'Tournaments'}
+        </h1>
 
-        <Link
-          to="/tournaments/create"
-          className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
-        >
-          <LucidePlusCircle className="h-5 w-5" />
-          Add Tournament
-        </Link>
+        {token && role === 'ORGANIZER' && (
+          <Link
+            to="/tournaments/create"
+            className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
+          >
+            <LucidePlusCircle className="h-5 w-5" />
+            Add Tournament
+          </Link>
+        )}
       </div>
 
       {/* Filter Bar */}
