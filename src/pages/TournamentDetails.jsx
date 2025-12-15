@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { cancelTournament, getTournamentById } from '../services/tournament-service';
 import { Trash, PenLine, ChevronRight } from 'lucide-react'; // Added ChevronRight for the arrow
+import CreateMatchModal from '../components/createMatchModal';
+import CustomButton from '../components/customButton';
 import CustomModal from '../components/customModal';
 import TournamentCreate from './TournamentCreate';
 import StatusBadge from '../components/StatusBadge';
 import { useUser } from '../app/hooks/use-user';
+import { getMatchesByTournament } from '../services/match-service';
 
 function TournamentDetails() {
   const { id } = useParams();
   const [tournament, setTournament] = useState(null);
+  const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
@@ -17,8 +21,24 @@ function TournamentDetails() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [canceling, setCanceling] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [createMatchModalOpen, setCreateMatchModalOpen] = useState(false);
 
   const role = useUser().role;
+
+  const fetchMatches = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await getMatchesByTournament(id);
+      setMatches(data);
+      console.log('Matches data:', matches);
+    } catch (err) {
+      console.error('Failed to fetch tournament details:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchTournament = async () => {
     setLoading(true);
@@ -36,6 +56,7 @@ function TournamentDetails() {
 
   useEffect(() => {
     fetchTournament();
+    fetchMatches();
   }, [id]);
 
   const handleCancel = async () => {
@@ -69,6 +90,9 @@ function TournamentDetails() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold text-gray-900">{tournament.name}</h1>
         <div className="flex items-center gap-4">
+          {role === 'ORGANIZER' && (
+            <CustomButton onClick={() => setCreateMatchModalOpen(true)}>Create Match</CustomButton>
+          )}
           {role === 'ORGANIZER' && (
             <button
               onClick={() => setEditModal(true)}
@@ -156,6 +180,39 @@ function TournamentDetails() {
             )}
           </div>
         </div>
+        {matches.map(match => (
+          <div
+            key={match.id}
+            className="mb-4 rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
+          >
+            <div className="flex justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900">Match ID: {match.id}</h2>
+                <p className="text-gray-600">Round: {match.round}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-gray-800">
+                  Team 1 ID: {match.team1Id} - Score: {match.team1Score ?? 'N/A'}
+                </p>
+                <p className="text-gray-800">
+                  Team 2 ID: {match.team2Id} - Score: {match.team2Score ?? 'N/A'}
+                </p>
+                {/* edit match */}
+                {role === 'ORGANIZER' && (
+                  <button
+                    onClick={() => {
+                      setSelectedMatch(match);
+                      setCreateMatchModalOpen(true);
+                    }}
+                    className="bg-mauaBlue hover:bg-fontyssPurple mt-2 rounded-lg px-3 py-1 text-white transition"
+                  >
+                    Edit Match
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
       <CustomModal
@@ -196,6 +253,19 @@ function TournamentDetails() {
               fetchTournament();
             }}
             tournament={tournament}
+          />
+        </CustomModal>
+      )}
+      {createMatchModalOpen && (
+        <CustomModal isOpen={createMatchModalOpen} onClose={() => setCreateMatchModalOpen(false)}>
+          <CreateMatchModal
+            tournamentId={id}
+            match={selectedMatch}
+            onCreated={() => {
+              fetchMatches();
+              setSelectedMatch(null);
+              setCreateMatchModalOpen(false);
+            }}
           />
         </CustomModal>
       )}
