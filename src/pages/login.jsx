@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { login } from '../services/user-service';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
+import mauaFontyssLogo from '../assets/mauaFontysLogo.png';
 import { useUser } from '../app/hooks/use-user';
 
 export default function Login() {
@@ -50,7 +51,7 @@ export default function Login() {
       <div className="from-fontyssPurple to-mauaBlue my-auto w-2/5 rounded-2xl bg-linear-to-b p-10 text-center text-white shadow-lg">
         <div className="mb-3 flex-col justify-center">
           <div className="mb-6 flex justify-center">
-            <img src="" alt="Logo" />
+            <img src={mauaFontyssLogo} alt="Logo" className="h-30 w-auto" />
           </div>
 
           <h2 className="mb-6 text-2xl font-bold">Welcome back!</h2>
