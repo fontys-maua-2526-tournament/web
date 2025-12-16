@@ -13,11 +13,13 @@ import TournamentCreate from './TournamentCreate';
 import StatusBadge from '../components/StatusBadge';
 import { useUser } from '../app/hooks/use-user';
 import { getMatchesByTournament, deleteMatch } from '../services/match-service';
+import { getAllTeams } from '../services/team-service';
 
 // ...existing code...
 function TournamentDetails() {
   const navigate = useNavigate();
   const [showDeleteTournamentModal, setShowDeleteTournamentModal] = useState(false);
+  const [teams, setTeams] = useState([]);
   const [deletingTournament, setDeletingTournament] = useState(false);
   const [showDeleteMatchModal, setShowDeleteMatchModal] = useState(false);
   const [deletingMatch, setDeletingMatch] = useState(false);
@@ -92,9 +94,30 @@ function TournamentDetails() {
     }
   };
 
+  const fetchTeams = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await getAllTeams();
+      // Support both array and object with .teams
+      if (Array.isArray(data)) {
+        setTeams(data);
+      } else if (data && Array.isArray(data.teams)) {
+        setTeams(data.teams);
+      } else {
+        setTeams([]);
+      }
+    } catch {
+      setError('Failed to load teams.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTournament();
     fetchMatches();
+    fetchTeams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
@@ -239,10 +262,14 @@ function TournamentDetails() {
               </div>
               <div className="text-right">
                 <p className="text-gray-800">
-                  Team 1 ID: {match.team1Id} - Score: {match.team1Score ?? 'N/A'}
+                  Team 1:{' '}
+                  {teams.find(t => String(t.id) === String(match.team1Id))?.name ?? match.team1Id} -
+                  Score: {match.team1Score ?? 'N/A'}
                 </p>
                 <p className="text-gray-800">
-                  Team 2 ID: {match.team2Id} - Score: {match.team2Score ?? 'N/A'}
+                  Team 2:{' '}
+                  {teams.find(t => String(t.id) === String(match.team2Id))?.name ?? match.team2Id} -
+                  Score: {match.team2Score ?? 'N/A'}
                 </p>
                 {/* edit match */}
                 {role === 'ORGANIZER' && (
