@@ -9,6 +9,8 @@ export default function Navbar() {
 
   const logo = 'https://i.ibb.co/4Pp6y2D/logo-HMP.png';
 
+  const token = localStorage.getItem('authToken');
+
   const handleOpenMenu = () => {
     setIsHamburguerOpen(true);
     setTimeout(() => {
@@ -55,15 +57,17 @@ export default function Navbar() {
           >
             <Trophy size={32} />
           </li>
-          <li
-            className={`duration-200 ${false ? 'hover:text-mauaBlue text-mauaBlue bg-white' : 'bg-transparent text-white hover:text-gray-200'} flex h-14 w-14 items-center justify-center rounded-xl hover:scale-110 hover:cursor-pointer`}
-            // onClick={() => {
-            //   navigate('/');
-            //   scrollTo(0, 0);
-            // }}
-          >
-            <User size={32} />
-          </li>
+          {token && (
+            <li
+              className={`duration-200 ${false ? 'hover:text-mauaBlue text-mauaBlue bg-white' : 'bg-transparent text-white hover:text-gray-200'} flex h-14 w-14 items-center justify-center rounded-xl hover:scale-110 hover:cursor-pointer`}
+              // onClick={() => {
+              //   navigate('/');
+              //   scrollTo(0, 0);
+              // }}
+            >
+              <User size={32} />
+            </li>
+          )}
         </ul>
       </nav>
       {/* RESPONSIVENESS */}

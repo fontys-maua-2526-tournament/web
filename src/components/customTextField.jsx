@@ -8,6 +8,7 @@ export default function CustomTextField({
   value,
   onChange,
   placeholder,
+  type,
   blocked = false,
   className = '',
   disabled = false,
@@ -15,6 +16,7 @@ export default function CustomTextField({
   showCopy = false,
   size = 'md', // md | lg
   inputProps = {},
+  required = false,
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -26,6 +28,7 @@ export default function CustomTextField({
       setTimeout(() => setCopied(false), 1500);
     } catch (err) {
       // ignore
+      console.error('Failed to copy text: ', err);
     }
   };
 
@@ -46,13 +49,14 @@ export default function CustomTextField({
           id={id}
           name={name}
           type="text"
+          required={required}
           value={value}
           onChange={isBlocked ? undefined : onChange}
           placeholder={placeholder}
           readOnly={readOnly || isBlocked}
           disabled={disabled || isBlocked}
           aria-disabled={isBlocked}
-          className={`w-full rounded-2xl border border-gray-300 bg-white pr-12 ${sizeClasses} focus:ring-mauaBlue focus:ring-2 focus:outline-none ${isBlocked ? 'cursor-not-allowed opacity-60' : ''}`}
+          className={`w-full rounded-2xl border border-gray-300 bg-white pr-12 ${sizeClasses} focus:ring-mauaBlue focus:ring-2 focus:outline-none ${isBlocked ? 'cursor-not-allowed opacity-60' : ''} text-gray-400`}
           {...inputProps}
         />
 
