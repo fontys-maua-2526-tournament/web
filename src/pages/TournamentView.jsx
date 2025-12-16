@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getAllTournaments } from '../services/tournament-service';
-import { LucidePlusCircle, PenLine } from 'lucide-react';
+import { LucidePlusCircle } from 'lucide-react';
 import StatusBadge from '../components/StatusBadge';
 import TournamentCreate from './TournamentCreate';
 import CustomModal from '../components/customModal';
@@ -81,13 +81,13 @@ function TournamentView() {
         </h1>
 
         {token && role === 'ORGANIZER' && (
-          <Link
-            to="/tournaments/create"
+          <CustomButton
+            onClick={() => setModalOpen(true)}
             className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
           >
             <LucidePlusCircle className="h-5 w-5" />
             Add Tournament
-          </Link>
+          </CustomButton>
         )}
       </div>
 
