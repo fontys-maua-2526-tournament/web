@@ -8,6 +8,7 @@ export default function Profile() {
   const navigate = useNavigate();
   const token = localStorage.getItem('authToken');
   const user = useUser();
+  const setUserContext = useUser().setUserContext;
 
   useEffect(() => {
     async function fetchData() {
@@ -25,6 +26,7 @@ export default function Profile() {
     localStorage.removeItem('authToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
+    setUserContext(null);
     navigate('/login');
   };
 

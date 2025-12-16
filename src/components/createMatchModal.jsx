@@ -85,7 +85,6 @@ export default function CreateMatchModal({ tournamentId, onCreated, match, onClo
     } catch (err) {
       const msg = err?.message || 'Failed to create match';
       setError(msg);
-      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
