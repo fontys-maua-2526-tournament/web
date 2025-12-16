@@ -3,7 +3,7 @@ import CustomButton from '../components/customButton';
 import CustomDateTimePicker from '../components/customDateTimePicker';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { register } from '../services/user-service';
+import { registerWithDetails } from '../services/user-service';
 
 export default function RegisterUser() {
   const [formData, setFormData] = useState({
@@ -41,11 +41,14 @@ export default function RegisterUser() {
         throw new Error('Password must be at least 6 characters long.');
       }
 
-      // Call register API
-      await register({
-        name: formData.name,
+      await registerWithDetails({
+        firstName: formData.name,
+        lastName: '',
         email: formData.email,
+        phoneNumber: formData.phone,
         password: formData.password,
+        dateOfBirth: formData.dob,
+        userRole: 'ATHLETE',
       });
 
       // Success - redirect to login
@@ -58,24 +61,16 @@ export default function RegisterUser() {
   };
 
   return (
-    <div className='flex flex-col'>
-      <div className="flex flex-col items-center gap-8 mt-6">
-        <h1 className="text-black text-4xl font-bold duration-300 hover:-translate-y-1.5 hover:scale-101 mb-8">
+    <div className="flex flex-col">
+      <div className="mt-6 flex flex-col items-center gap-8">
+        <h1 className="mb-8 text-4xl font-bold text-black duration-300 hover:-translate-y-1.5 hover:scale-101">
           Register an user
         </h1>
 
-        {error && (
-          <div className="bg-red-500 text-white p-4 rounded-lg mb-4 max-w-md">
-            {error}
-          </div>
-        )}
+        {error && <div className="mb-4 max-w-md rounded-lg bg-red-500 p-4 text-white">{error}</div>}
 
-        <form 
-          onSubmit={handleSubmit} 
-          className=""
-        >
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-sm md:w-xl lg:w-3xl">
+        <form onSubmit={handleSubmit} className="">
+          <div className="grid w-sm grid-cols-1 gap-6 md:w-xl md:grid-cols-2 lg:w-3xl">
             <div className="">
               <CustomTextField
                 id="name"
@@ -113,7 +108,6 @@ export default function RegisterUser() {
             </div>
 
             <div>
-
               <CustomTextField
                 id="password"
                 name="password"
@@ -151,22 +145,22 @@ export default function RegisterUser() {
             </div>
           </div>
 
-          <div className="flex gap-4 justify-center items-center mt-5 md:mt-10">
+          <div className="mt-5 flex items-center justify-center gap-4 md:mt-10">
             <CustomButton
               onClick={handleSubmit}
-              className="bg-blue-600 text-white px-8 py-3 rounded-2xl font-semibold hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
-                Register
-              </CustomButton>
+              className="rounded-2xl bg-blue-600 px-8 py-3 font-semibold text-white transition-all duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Register
+            </CustomButton>
           </div>
-          <div className="flex justify-center items-center mt-5 md:mt-10">
+          <div className="mt-5 flex items-center justify-center md:mt-10">
             <Link
               to="/login"
-              className="text-mauaBlue font-semibold hover:text-fontyssPurple underline"
+              className="text-mauaBlue hover:text-fontyssPurple font-semibold underline"
             >
               Back to Login
             </Link>
           </div>
-
         </form>
       </div>
     </div>

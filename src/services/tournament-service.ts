@@ -1,3 +1,7 @@
+export async function deleteTournament(id: number | string) {
+  const response = await api.delete(`${API_URL}/${id}`);
+  return response.data;
+}
 import api from './api';
 
 const API_URL = '/tournaments';
@@ -22,15 +26,18 @@ export async function getTournamentById(id: number | string) {
   return response.data;
 }
 
-export async function updateTournament(id: number, tournament: {
-  id?: number;
-  name: string;
-  invite?: string;
-  address: string;
-  status?: string;
-  startTime: string;
-  endTime: string;
-}) {
+export async function updateTournament(
+  id: number,
+  tournament: {
+    id?: number;
+    name: string;
+    invite?: string;
+    address: string;
+    status?: string;
+    startTime: string;
+    endTime: string;
+  },
+) {
   const response = await api.put(`${API_URL}/${id}`, tournament);
   return response.data;
 }
