@@ -28,13 +28,26 @@ export async function deleteTeam(id: number) {
 }
 
 export async function getTeamMembers(teamId: number | string) {
-  const response = await api.get(`${API_URL}/${teamId}/users`);
+  const response = await api.get(`${API_URL}/${teamId}/members`);
   const data = response.data;
-  return Array.isArray(data) ? data : data.users || data.data || [];
+  return Array.isArray(data) ? data : data.members || data.data || [];
 }
 
 export async function addUserToTeam(teamId: number | string, userId: number) {
-  const response = await api.post(`${API_URL}/${teamId}/users`, { userId });
+  // NOTE: some backends expose adding by team id via POST /teams/{teamId}/users
+  // keep support for that shape if available
+  try {
+    const response = await api.post(`${API_URL}/${teamId}`, { userId });
+    return response.data;
+  } catch (err) {
+    // fallback to invite-based endpoint if backend exposes addToTeam
+    // (TeamsController provides POST /teams/addToTeam/{userId}/{inviteCode})
+    throw err;
+  }
+}
+
+export async function addUserToTeamByInvite(userId: number | string, inviteCode: string) {
+  const response = await api.post(`${API_URL}/addToTeam/${userId}/${inviteCode}`);
   return response.data;
 }
 

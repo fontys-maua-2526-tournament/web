@@ -1,9 +1,17 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getTeamById, getAllTeams, getTeamMembers, removeUserFromTeam } from '../services/team-service';
-import { LucidePlusCircle, LucideTrash2 } from 'lucide-react';
+import {
+  getTeamById,
+  getAllTeams,
+  getTeamMembers,
+  removeUserFromTeam,
+  deleteTeam,
+  updateTeam,
+} from '../services/team-service';
+import { LucidePlusCircle, LucideTrash2, PenLine } from 'lucide-react';
 import CustomButton from '../components/customButton';
 import CustomModal from '../components/customModal';
+import CustomTextField from '../components/customTextField';
 import AddUserToTeam from './addUserToTeam';
 import { toast } from 'react-toastify';
 
@@ -15,6 +23,52 @@ const TeamDetail = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [confirmDeleteModal, setConfirmDeleteModal] = useState(false);
   const [selectedMemberToDelete, setSelectedMemberToDelete] = useState(null);
+  const [deleteTeamModal, setDeleteTeamModal] = useState(false);
+  const [deletingTeam, setDeletingTeam] = useState(false);
+  const [editTeamModal, setEditTeamModal] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editInvite, setEditInvite] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
+  const openEditTeamModal = () => {
+    setEditName(team?.name || '');
+    setEditInvite(team?.inviteCode || '');
+    setEditTeamModal(true);
+  };
+
+  const handleEditTeam = async e => {
+    e.preventDefault();
+    setSavingEdit(true);
+    try {
+      await updateTeam(Number(teamId), {
+        id: Number(teamId),
+        name: editName,
+        inviteCode: editInvite,
+      });
+      toast.success('Team updated successfully');
+      setEditTeamModal(false);
+      fetchTeamDetails();
+    } catch (error) {
+      console.error('Failed to update team:', error);
+      toast.error('Failed to update team');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+  const navigate = useNavigate();
+  const handleDeleteTeam = async () => {
+    setDeletingTeam(true);
+    try {
+      await deleteTeam(teamId);
+      toast.success('Team deleted successfully');
+      setDeleteTeamModal(false);
+      navigate('/teams');
+    } catch (error) {
+      console.error('Failed to delete team:', error);
+      toast.error('Failed to delete team');
+    } finally {
+      setDeletingTeam(false);
+    }
+  };
 
   const fetchMembers = async () => {
     try {
@@ -45,6 +99,7 @@ const TeamDetail = () => {
         }
       } catch (err) {
         // fallback to fetching all teams and finding by id
+        console.log('Falling back to fetching all teams', err);
         const data = await getAllTeams();
         const foundTeam = data.teams
           ? data.teams.find(t => t.id === parseInt(teamId))
@@ -113,15 +168,97 @@ const TeamDetail = () => {
       {/* Title */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-4xl font-bold text-gray-900">{team?.name || 'Team'}</h1>
-
-        <CustomButton
-          onClick={() => setModalOpen(true)}
-          className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
-        >
-          <LucidePlusCircle className="h-5 w-5" />
-          Add Member
-        </CustomButton>
+        <div className="flex gap-3">
+          <CustomButton
+            onClick={() => setModalOpen(true)}
+            className="bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors hover:bg-[#874c95]"
+          >
+            <LucidePlusCircle className="h-5 w-5" />
+            Add Member
+          </CustomButton>
+          <CustomButton
+            onClick={openEditTeamModal}
+            middleSize={false}
+            className="bg-mauaBlue hover:bg-fontyssPurple inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white shadow transition-colors"
+          >
+            <PenLine className="h-5 w-5" />
+          </CustomButton>
+          <CustomButton
+            onClick={() => setDeleteTeamModal(true)}
+            middleSize={false}
+            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-4 py-2 text-white shadow transition-colors hover:bg-red-700"
+          >
+            <LucideTrash2 className="h-5 w-5" />
+            Delete Team
+          </CustomButton>
+        </div>
       </div>
+      {/* Edit Team Modal */}
+      <CustomModal
+        isOpen={editTeamModal}
+        title={'Edit Team'}
+        onClose={() => setEditTeamModal(false)}
+      >
+        <form onSubmit={handleEditTeam} className="flex flex-col gap-4 px-4 py-2">
+          <CustomTextField
+            id="edit-team-name"
+            label="Team Name"
+            value={editName}
+            onChange={e => setEditName(e.target.value)}
+            required
+          />
+          <CustomTextField
+            id="edit-team-invite"
+            label="Invite Code"
+            value={editInvite}
+            onChange={e => setEditInvite(e.target.value)}
+          />
+          <div className="mt-4 flex gap-2">
+            <CustomButton
+              type="button"
+              onClick={() => setEditTeamModal(false)}
+              className="flex-1 rounded-lg bg-gray-400 px-3 py-1 text-xs text-white transition-colors hover:bg-gray-500"
+            >
+              Cancel
+            </CustomButton>
+            <CustomButton
+              type="submit"
+              className="bg-mauaBlue hover:bg-fontyssPurple flex-1 rounded-lg px-3 py-1 text-xs text-white transition-colors"
+              disabled={savingEdit}
+            >
+              {savingEdit ? 'Saving...' : 'Save'}
+            </CustomButton>
+          </div>
+        </form>
+      </CustomModal>
+      {/* Delete Team Modal */}
+      <CustomModal
+        isOpen={deleteTeamModal}
+        title={'Delete Team'}
+        onClose={() => setDeleteTeamModal(false)}
+      >
+        <div className="flex flex-col items-center justify-center gap-4 px-4">
+          <p className="text-center text-sm text-gray-700">
+            Are you sure you want to delete the team <strong>{team?.name}</strong>? This action
+            cannot be undone.
+          </p>
+          <div className="flex w-full gap-2">
+            <CustomButton
+              onClick={() => setDeleteTeamModal(false)}
+              className="flex-1 rounded-lg bg-gray-400 px-3 py-1 text-xs text-white transition-colors hover:bg-gray-500"
+            >
+              Cancel
+            </CustomButton>
+            <CustomButton
+              onClick={handleDeleteTeam}
+              className="flex-1 rounded-lg bg-red-600 px-3 py-1 text-xs text-white transition-colors hover:bg-red-700"
+              disabled={deletingTeam}
+            >
+              {deletingTeam ? 'Deleting...' : 'Delete'}
+            </CustomButton>
+          </div>
+        </div>
+      </CustomModal>
 
       {/* Team Members Grid */}
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">

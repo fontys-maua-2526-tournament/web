@@ -15,6 +15,10 @@ export interface Match extends SaveMatchRequest {
   id?: number;
 }
 
+export async function deleteMatch(id: number | string) {
+  const response = await api.delete(`${API_URL}/${id}`);
+  return response.data;
+}
 export async function createMatch(match: SaveMatchRequest) {
   const response = await api.post(API_URL, match);
   return response.data;
