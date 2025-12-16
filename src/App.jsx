@@ -52,7 +52,6 @@ export default function App() {
             <Route path="/tournaments" element={<TournamentView />} />
             <Route path="/tournaments/:id" element={<TournamentDetails />} />
             <Route path="/tournaments/create" element={<TournamentCreate />} />
-            <Route path="/tournaments/:id/bracket" element={<TournamentBracketView />} />
             <Route path="/coach/teams/view" element={<CoachTeamView />} />
           </Routes>
         </div>
