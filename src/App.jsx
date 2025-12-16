@@ -12,6 +12,7 @@ import TeamDetail from './pages/teamDetail.jsx';
 import TournamentView from './pages/TournamentView';
 import TeamCreate from './pages/teamCreate';
 import TournamentDetails from './pages/TournamentDetails';
+import TournamentBracketView from './pages/TournamentBracketView.jsx';
 import Profile from './pages/profile';
 import { UserProvider } from './app/context/user-context';
 import { ToastContainer } from 'react-toastify';

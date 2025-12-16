@@ -153,7 +153,9 @@ export default function CustomDateTimePicker({
 
               <button
                 onClick={() => {
-                  onChange(`${date}T${hour}:${minute}`);
+                  if (typeof onChange === 'function') {
+                    onChange({ target: { value: `${date}T${hour}:${minute}` } });
+                  }
                   setOpen(false);
                 }}
                 className="bg-mauaBlue w-full rounded-lg py-2 text-white hover:bg-blue-600"
