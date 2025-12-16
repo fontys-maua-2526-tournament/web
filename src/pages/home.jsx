@@ -49,7 +49,7 @@ export default function Home() {
       <header className="mx-auto max-w-6xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-bold text-black">Welcome to Fontyss Tournaments</h1>
+            <h1 className="text-4xl font-bold text-black">Welcome to Mauá-Fontyss Tournaments</h1>
             <p className="mt-2 text-gray-600">
               Find and join tournaments near you — quick and easy.
             </p>
